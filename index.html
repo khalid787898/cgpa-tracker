@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CGPA Calculator & Target Planner | Marks to CGPA</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#5b4bff"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Free CGPA calculator for university students. Enter course marks and credits per semester, see GPA and CGPA, and find the marks you need to reach your target CGPA. Saves in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Inter:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f6ff;--card:#fff;--ink:#14163a;--mute:#5b6090;--line:#e3e6fa;--p:#5b4bff;--p2:#00c2a8;--warn:#ff7a45;--bad:#e5365a;--good:#12a36b;--soft:#eef0ff;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1030;--card:#181b4a;--ink:#eef0ff;--mute:#a3a8e0;--line:#2b2f6e;--p:#8d82ff;--p2:#2ee6c5;--soft:#20245a}}
+:root[data-theme="dark"]{--bg:#0e1030;--card:#181b4a;--ink:#eef0ff;--mute:#a3a8e0;--line:#2b2f6e;--p:#8d82ff;--p2:#2ee6c5;--soft:#20245a}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Noto Sans Bengali",system-ui,sans-serif;line-height:1.5}
+h1,h2,h3{font-family:Sora,Inter,"Noto Sans Bengali",sans-serif;margin:0;letter-spacing:-.02em}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+.hero{background:linear-gradient(135deg,#3a2bd9,#5b4bff 45%,#00c2a8);color:#fff;border-radius:0 0 36px 36px;padding:28px 0 90px;position:relative;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:#fff2;animation:fl 9s ease-in-out infinite alternate}
+.hero::before{width:300px;height:300px;right:-80px;top:-100px}
+.hero::after{width:180px;height:180px;left:-50px;bottom:-60px;animation-delay:-4s}
+@keyframes fl{to{transform:translate(30px,24px) scale(1.15)}}
+.hero .wrap{position:relative;z-index:1;display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hero h1{font-size:clamp(28px,5.5vw,46px);font-weight:800;max-width:14ch}
+.hero p{margin:10px 0 0;max-width:42ch;opacity:.92}
+.tb{display:flex;justify-content:space-between;align-items:center;padding:0 0 22px}
+.tb b{font-family:Sora,sans-serif;font-size:18px}
+.tb button{background:#fff3;color:#fff;border:0;border-radius:999px;padding:8px 14px;cursor:pointer;font:inherit}
+.gauge{position:relative;width:170px;height:170px;flex:none}
+.gauge svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gauge circle{fill:none;stroke-width:13;stroke-linecap:round}
+.gauge .bg{stroke:#fff3}.gauge .fg{stroke:#fff;transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)}
+.gauge div{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.gauge strong{font-family:Sora,sans-serif;font-size:38px;line-height:1}
+.gauge small{opacity:.85}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:-56px;position:relative;z-index:2}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 12px 30px -18px #2a1fa066}
+.stat span{color:var(--mute);font-size:13px}.stat b{display:block;font-family:Sora,sans-serif;font-size:26px}
+h2{font-size:24px;margin:34px 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px}
+.sh{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.sh input.nm{flex:1;font-family:Sora,sans-serif;font-weight:700;font-size:17px;border:0;background:transparent;color:var(--ink);padding:6px 0;min-width:0}
+.gpa{background:var(--soft);color:var(--p);border-radius:999px;padding:5px 12px;font-weight:600;font-size:14px;white-space:nowrap}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
+input:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--p);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 70px 80px 54px 30px;gap:8px;align-items:center;margin-bottom:8px}
+.row.h{color:var(--mute);font-size:12px;margin-bottom:4px}
+.g{text-align:center;font-weight:700;border-radius:8px;padding:6px 0;background:var(--soft);font-size:14px}
+.g.a{background:#12a36b22;color:var(--good)}.g.f{background:#e5365a22;color:var(--bad)}
+.x{border:0;background:transparent;color:var(--mute);cursor:pointer;font-size:18px}
+.btn{border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;background:var(--p);color:#fff;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}.btn.l{background:var(--soft);color:var(--p)}.btn.d{background:transparent;color:var(--bad)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.plan label{font-size:13px;color:var(--mute);display:block;margin-bottom:4px}
+.res{border-radius:16px;padding:16px;background:var(--soft);border-left:6px solid var(--p)}
+.res.ok{border-color:var(--good)}.res.no{border-color:var(--bad)}
+.res h3{font-size:20px;margin-bottom:6px}
+.res p{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mute);font-weight:500}
+.bar{height:12px;border-radius:99px;background:var(--soft);overflow:hidden;margin:10px 0 4px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--p),var(--p2));transition:width 1s}
+details{margin-top:6px}summary{cursor:pointer;color:var(--p);font-weight:600}
+.sc{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.sc div{font-size:12px;color:var(--mute)}
+.note{color:var(--mute);font-size:13px}
+footer{padding:30px 0 50px;text-align:center;color:var(--mute);font-size:13px}
+.pop{animation:pop .5s}@keyframes pop{40%{transform:scale(1.12)}}
+textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;width:100%;min-height:130px;resize:vertical}
+textarea:focus-visible{outline:3px solid var(--p);outline-offset:2px}
+[hidden]{display:none!important}
+.db2{display:grid;grid-template-columns:34px 1fr 64px;gap:8px;align-items:center;margin-bottom:6px;font-size:13px}.db2 i{display:block;height:14px;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--p2))}.db2 i.no{background:var(--bad);opacity:.55}.db2 i.ok{background:var(--good)}
+.beta{font-size:12px;background:var(--p2);color:#06232b;border-radius:999px;padding:2px 10px;vertical-align:middle;font-family:Inter,sans-serif}
+.rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px}
+.rc{border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.rc h4{margin:0;font-family:Sora,sans-serif;font-size:16px}
+.chip{display:inline-block;background:var(--soft);color:var(--p);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}.chip.g{background:#12a36b22;color:var(--good)}.chip.s{background:#ff7a4522;color:var(--warn)}
+.stars{color:#f5b301;font-size:16px;letter-spacing:1px}.stars b{color:var(--ink);font-size:14px;letter-spacing:0}
+.rf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:auto}.rf b{font-family:Sora,sans-serif;font-size:18px;margin-right:auto}
+.why{margin:0;font-size:12px;color:var(--p2);font-weight:700}
+.rate{display:flex;gap:4px;flex-wrap:wrap}.rate button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:4px 8px;cursor:pointer}
+.btn.sm{padding:8px 12px;font-size:14px}.btn[disabled]{opacity:.5;cursor:not-allowed}a.btn{text-decoration:none;display:inline-block}
+.steps3{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}.steps3 div{background:var(--soft);border-radius:14px;padding:12px;font-size:14px}.steps3 b{display:block;color:var(--p)}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}.rules p{margin:4px 0 0}
+@media print{body.per .hero,body.per .stats,body.per .cdw,body.per .tabs,body.per footer,body.per .wrap.noprint,body.per main h2:not(#erH){display:none!important}}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pbx{border-radius:16px;padding:14px;background:var(--soft);text-align:center}.pbx.g{background:#12a36b22}.pbx.b{background:#e5365a1f}.pbx span{display:block;font-size:13px;color:var(--mute)}.pbx b{display:block;font-family:Sora,sans-serif;font-size:28px}.pbx small{display:block;font-size:12px;color:var(--mute)}
+.cvs{border-top:1px dashed var(--line);padding:10px 0;font-size:14px}.cvs>b{display:block;margin-bottom:4px}
+.tour{position:fixed;inset:0;z-index:60;background:#000a;display:grid;place-items:center;padding:16px}.tourc{background:var(--card);color:var(--ink);border-radius:22px;padding:22px;max-width:420px;width:100%;box-shadow:0 20px 60px -20px #000}.tourc h3{font-size:22px;margin:4px 0 8px}.tourc p{color:var(--mute);margin:0 0 16px}
+.bkb{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 12px 30px -12px #0008;max-width:560px;margin:0 auto}.bkb span{flex:1;min-width:180px;font-size:14px}
+@media(max-width:640px){.pgrid{grid-template-columns:1fr}}
+.cdw{margin-top:16px;background:linear-gradient(135deg,#3a2bd9,#5b4bff 55%,#00c2a8);color:#fff;border-radius:22px;padding:16px 18px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 14px 30px -18px #2a1fa0}
+.cdw.urgent{background:linear-gradient(135deg,#e5365a,#ff7a45)}
+.cdw small{display:block;opacity:.9}.cdw b{font-family:Sora,sans-serif;font-size:19px;display:block}
+.cdn{display:flex;gap:8px}.cdn div{background:#ffffff2e;border-radius:12px;padding:8px 6px;min-width:56px;text-align:center}.cdn strong{display:block;font-family:Sora,sans-serif;font-size:26px;line-height:1.1}.cdn span{font-size:11px;opacity:.9}
+.toast{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:50;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;box-shadow:0 12px 30px -10px #000;max-width:520px;margin:0 auto;cursor:pointer}
+.evt{margin-bottom:12px}.evr1{display:grid;grid-template-columns:1fr 110px 28px;gap:8px;margin-bottom:6px}.evr2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:640px){.cdn div{min-width:48px}.cdn strong{font-size:22px}}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;gap:8px;overflow-x:auto;padding:10px 2px;margin:14px 0 0;background:var(--bg);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;border-radius:999px;padding:10px 16px;cursor:pointer;white-space:nowrap;transition:transform .15s}
+.tabs button:hover{transform:translateY(-2px)}
+.tabs button[aria-selected="true"]{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-color:transparent;box-shadow:0 8px 20px -10px var(--p)}
+@media print{.tabs{display:none!important}}
+.row4{display:grid;grid-template-columns:1fr 140px 72px 28px;gap:8px;align-items:center;margin-bottom:8px}.row4.h{color:var(--mute);font-size:12px;margin-bottom:4px}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}.mini div{background:var(--soft);border-radius:14px;padding:10px;text-align:center;font-size:13px;color:var(--mute)}.mini b{display:block;font-family:Sora,sans-serif;font-size:22px;color:var(--ink)}
+.tmr{font-family:Sora,sans-serif;font-size:64px;font-weight:800;text-align:center;color:var(--p);line-height:1.1;margin:4px 0 10px}
+.row3{display:grid;grid-template-columns:1fr 84px 84px 28px;gap:8px;align-items:center;margin-bottom:8px}.row3.h{color:var(--mute);font-size:12px;margin-bottom:4px}
+select.sel{width:auto;max-width:100%}
+.row2{display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center;margin-bottom:8px;font-size:14px}.up{color:var(--good);font-weight:700}.dn{color:var(--bad);font-weight:700}
+.pv{margin-top:12px;max-height:320px;overflow:auto}.pv h4{margin:10px 0 4px;font-family:Sora,sans-serif}
+.steps2{margin:0 0 10px;padding-left:20px;color:var(--mute);font-size:14px}.warn{color:var(--warn);font-size:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.two .card{margin:0}
+h3.t{font-size:17px;margin-bottom:10px}
+.db{display:grid;grid-template-columns:34px 1fr 24px;gap:8px;align-items:center;margin-bottom:6px;font-size:13px}
+.db i{display:block;height:14px;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--p2))}
+.imp{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.imp b{color:var(--good);white-space:nowrap}
+.goal{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:14px}
+.goal input{width:90px}.goal span{color:var(--mute);flex:1;min-width:180px}
+.tips,.res2{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tip{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;transition:transform .2s}
+.tip:hover{transform:translateY(-4px)}.tip em{font-style:normal;font-size:28px;display:block}
+.tip b{display:block;font-family:Sora,sans-serif;margin:4px 0 2px}.tip p{margin:0;font-size:13px;color:var(--mute)}
+.res2 a{display:block;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;transition:.2s}
+.res2 a:hover{border-color:var(--p);transform:translateY(-3px)}.res2 b{color:var(--p)}.res2 span{display:block;font-size:13px;color:var(--mute)}
+.fx{font-family:Sora,sans-serif;font-size:17px;background:var(--soft);padding:12px 16px;border-radius:14px;text-align:center;margin:8px 0}
+@media print{.noprint,.acts,.x,.plan,details,.goal{display:none!important}.hero{background:#fff!important;color:#14163a!important}.hero::before,.hero::after{display:none}.gauge .fg{stroke:#5b4bff}.gauge .bg{stroke:#ddd}}
+@media(max-width:640px){.two,.tips,.res2,.rgrid,.steps3,.rules{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:10px}.stat b{font-size:19px}.plan{grid-template-columns:1fr}.row{grid-template-columns:1fr 56px 66px 44px 24px;gap:6px}.sc{grid-template-columns:repeat(2,1fr)}.gauge{width:130px;height:130px}.gauge strong{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap" style="flex-direction:column;align-items:stretch">
+  <div class="tb"><b>CGPA Tracker</b><span class="noprint"><button id="pr">Print / PDF</button> <button id="shH">Share</button> <button id="lg">বাংলা</button> <button id="theme" aria-label="Toggle dark mode">Dark / Light</button></span></div>
+  <div style="display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+    <div><h1>Know your CGPA. Plan your next result.</h1><p>Add marks and credits for each semester. See your GPA, your CGPA, and the marks you need to reach your target.</p></div>
+    <div class="gauge"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" id="arc" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg><div><strong id="cg">0.00</strong><small id="lv">CGPA / 4.00</small></div></div>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <div class="stats">
+    <div class="stat"><span>Credits done</span><b id="sc">0</b></div>
+    <div class="stat"><span>Semesters</span><b id="sn">0</b></div>
+    <div class="stat"><span>Last GPA</span><b id="sl">-</b></div>
+    <div class="stat"><span>CGPA without F</span><b id="se">-</b></div>
+  </div>
+
+  <div class="cdw noprint" id="cdw" hidden><div><small>Next exam</small><b id="cdT"></b><small id="cdD"></small></div><div class="cdn" id="cdN"></div></div>
+  <nav class="tabs noprint" id="tabs" aria-label="Sections"><button data-tab="calc">Calculator</button><button data-tab="plan">Plan</button><button data-tab="insights">Insights</button><button data-tab="study">Study</button><button data-tab="exams">Exams</button><button data-tab="hub">Hub</button><button data-tab="collab">Collaborate</button><button data-tab="more">More</button></nav>
+
+  <h2>Quick GPA</h2>
+  <div class="card noprint">
+    <p class="note">Need a fast answer? Enter credits and grades. Nothing is saved.</p>
+    <div id="qgl"></div>
+    <div class="acts"><button class="btn l" id="qgAdd">+ Add course</button><button class="btn l" id="qgClr">Clear</button></div>
+    <div class="acts" style="margin-top:12px"><input id="qgC" type="number" step="0.01" min="0" max="4" inputmode="decimal" placeholder="Current CGPA (optional)" style="flex:1;min-width:150px" aria-label="Current CGPA"><input id="qgK" type="number" min="0" inputmode="decimal" placeholder="Credits so far" style="flex:1;min-width:120px" aria-label="Credits so far"></div>
+    <div class="res" id="qgr" style="margin-top:12px"></div>
+  </div>
+
+  <h2>Import your results</h2>
+  <div class="card noprint">
+    <ol class="steps2"><li>Open your university result page and select the result table.</li><li>Copy it (Ctrl+C) and paste it below.</li><li>Check the preview, then add it. Nothing leaves your device.</li></ol>
+    <textarea id="pasteBox" placeholder="Paste your results here. Works with tables that have course, credit, and grade or marks." aria-label="Paste results"></textarea>
+    <div class="acts"><button class="btn" id="pParse">Read my results</button><button class="btn l" id="pSample">Try a sample</button></div>
+    <div class="pv" id="pPrev"></div>
+    <div class="acts" id="pBtns" hidden><button class="btn" id="pAdd">Add to my data</button><button class="btn d" id="pRep">Replace my data</button></div>
+  </div>
+
+  <h2>Your semesters</h2>
+  <div id="sems"></div>
+  <div class="acts"><button class="btn" id="addSem">+ Add semester</button></div>
+
+  <h2>Target planner</h2>
+  <div class="card">
+    <div class="plan">
+      <div><label for="tg">Target CGPA</label><input id="tg" type="number" step="0.01" min="0" max="4" inputmode="decimal"></div>
+      <div><label for="tc">Total credits in degree</label><input id="tc" type="number" min="1" inputmode="numeric"></div>
+      <div><label for="rs">Semesters left</label><input id="rs" type="number" min="1" inputmode="numeric"></div>
+    </div>
+    <div class="bar"><i id="pb"></i></div>
+    <div class="note" id="pt"></div>
+    <p class="note">Failed (F) courses are treated as retakes: the F is replaced and its credits are still needed.</p>
+    <div class="res" id="res" style="margin-top:12px"></div>
+    <div id="pgraph"></div>
+    <h3 style="margin:18px 0 6px;font-size:18px">What if my next semester GPA is...</h3>
+    <div style="max-width:220px;margin-bottom:8px"><label class="note" for="nc">Credits next semester</label><input id="nc" type="number" min="1" inputmode="numeric"></div>
+    <table><thead><tr><th>Next GPA</th><th>Marks needed</th><th>New CGPA</th></tr></thead><tbody id="wi"></tbody></table>
+  </div>
+
+  <h2>Exam marks calculator</h2>
+  <div class="card noprint">
+    <p class="note">Enter the parts of one course. Leave "Obtained" empty for parts not taken yet, like the final exam. You will see the marks needed for each grade.</p>
+    <div class="row3 h"><span>Part</span><span>Full marks</span><span>Obtained</span><span></span></div>
+    <div id="exl"></div>
+    <div class="acts"><button class="btn l" id="exAdd">+ Add part</button></div>
+    <div class="res" id="exr" style="margin-top:12px"></div>
+  </div>
+
+  <h2>Attendance tracker</h2>
+  <div class="card noprint">
+    <div class="acts" style="margin:0 0 12px;align-items:center"><label class="note" for="atReq">Required attendance (%)</label><input id="atReq" type="number" min="1" max="99" inputmode="numeric" style="width:90px"></div>
+    <div class="row3 h"><span>Course</span><span>Held</span><span>Attended</span><span></span></div>
+    <div id="atl"></div>
+    <div class="acts"><button class="btn l" id="atAdd">+ Add course</button></div>
+    <div id="atr" style="margin-top:14px"></div>
+  </div>
+
+  <h2>Exams &amp; deadlines</h2>
+  <div class="card noprint">
+    <p class="note">Add exams and deadlines to see a countdown and a daily study-hours suggestion. Each event can be added to your phone calendar with a reminder one day before.</p>
+    <div id="dll"></div>
+    <div class="acts"><button class="btn l" id="dlAdd">+ Add event</button><button class="btn l" id="dlIcs">Download all (.ics)</button></div>
+    <div id="dlr" style="margin-top:12px"></div>
+  </div>
+
+  <h2 id="erH">Exam routine</h2>
+  <div class="card">
+    <div id="erT"></div>
+    <div class="acts noprint" style="margin-top:12px"><button class="btn" id="erPrint">Print exam routine</button><button class="btn l" id="erIcs">Add to calendar (.ics)</button><button class="btn l" id="erCopy">Copy as text</button></div>
+  </div>
+
+  <h2>Import exam routine</h2>
+  <div class="card noprint">
+    <p class="note">Copy the exam routine from your department's notice or website and paste it here. Each line with a date becomes an exam. Courses that match yours are selected for you.</p>
+    <textarea id="irBox" placeholder="Paste the exam routine here..." aria-label="Exam routine text"></textarea>
+    <div class="acts"><button class="btn" id="irRead">Read routine</button><button class="btn l" id="irSample">Try a sample</button></div>
+    <div class="pv" id="irPrev"></div>
+    <div class="acts" id="irBtns" hidden><button class="btn" id="irAdd">Add selected to my exams</button></div>
+  </div>
+
+  <h2>Study timer</h2>
+  <div class="card noprint">
+    <div class="tmr" id="tmt">25:00</div>
+    <div class="acts" style="justify-content:center"><select class="sel" id="tmm" aria-label="Focus length"><option value="25">25 min focus</option><option value="45">45 min focus</option><option value="50">50 min focus</option></select><button class="btn" id="tmGo">Start</button><button class="btn l" id="tmRs">Reset</button></div>
+    <p class="note" id="tmn" style="text-align:center;min-height:20px"></p>
+    <div id="tms"></div>
+  </div>
+
+  <h2>Insights</h2>
+  <div class="two">
+    <div class="card"><h3 class="t">Semester GPA and CGPA</h3><div id="trend"></div></div>
+    <div class="card"><h3 class="t">Grade distribution</h3><div id="dist"></div></div>
+  </div>
+  <div class="card"><h3 class="t">Best courses to improve</h3><div id="impv"></div></div>
+
+  <h2>CGPA predictor</h2>
+  <div class="card noprint"><div id="prd"></div></div>
+
+  <h2>What-if simulator</h2>
+  <div class="card noprint">
+    <p class="note">See your result if you had earned other grades in courses you failed, withdrew from, or have no marks for. Your real data does not change until you press Apply.</p>
+    <div class="acts" style="margin:0 0 12px"><span class="note" style="align-self:center">Give all of them:</span><button class="btn l" data-wq="0">A+</button><button class="btn l" data-wq="1">A</button><button class="btn l" data-wq="2">A-</button><button class="btn l" data-wq="3">B+</button><button class="btn l" data-wq="4">B</button></div>
+    <div id="wl"></div>
+    <label class="note"><input type="checkbox" id="wall" style="width:auto"> Show all courses</label>
+    <div class="res" id="wr" style="margin-top:12px"></div>
+    <div class="acts"><button class="btn" id="wa">Apply these grades to my data</button><button class="btn l" id="wz">Reset what-if</button></div>
+  </div>
+
+  <h2>Degree progress</h2>
+  <div class="card noprint"><div id="dpg"></div></div>
+
+  <h2>How CGPA works</h2>
+  <div class="two">
+    <div class="card"><h3 class="t">The formula</h3>
+      <div class="fx">CGPA = &Sigma;(credit &times; grade point) &divide; &Sigma;credits</div>
+      <p class="note">Example: Course A, 3 cr, 4.00 gives 12. Course B, 3 cr, 3.50 gives 10.5. Total 22.5 &divide; 6 credits = <b>3.75</b>.</p>
+      <p class="note">Courses with more credits change your CGPA more. Do not average GPAs directly, because semesters have different credits.</p></div>
+    <div class="card"><h3 class="t">Marks to grade scale</h3><div id="gt"></div></div>
+  </div>
+
+  <h2>Study priority</h2>
+  <div class="card noprint">
+    <div class="acts" style="margin:0 0 10px;align-items:center"><label class="note" for="spH">Study hours per week</label><input id="spH" type="number" min="1" inputmode="numeric" style="width:90px"></div>
+    <p class="note">Based on your latest semester. Courses with more credits, lower marks, or an exam this week get more hours.</p>
+    <div id="spl"></div>
+  </div>
+
+  <h2>Course view</h2>
+  <div class="card noprint">
+    <div class="acts" style="margin:0 0 10px"><select class="sel" id="cvS" aria-label="Course"></select></div>
+    <div id="cvL"></div>
+    <div class="acts" style="margin-top:10px"><input id="cvT" placeholder="Add a task for this course" style="flex:1;min-width:160px" aria-label="Task for this course"><button class="btn l" id="cvAdd">Add task</button></div>
+  </div>
+
+  <h2>Reminders</h2>
+  <div class="card noprint">
+    <p class="note">Get a reminder the evening before exams and classes, and shortly before each class. Reminders appear while this site is open in your browser or installed as an app. To get reminders even when the site is closed, add your routine to your phone calendar with the buttons below.</p>
+    <div class="acts" style="align-items:center;margin:0 0 12px"><button class="btn" id="ntOn">Turn on reminders</button><button class="btn l" id="ntTest">Send test</button><span class="note" id="ntS"></span></div>
+    <div class="acts" style="align-items:center">
+      <label class="note" for="ntLead">Before each class</label><select class="sel" id="ntLead"><option value="10">10 min</option><option value="15">15 min</option><option value="30">30 min</option><option value="60">1 hour</option></select>
+      <label class="note" for="ntEve">Evening reminder at</label><input type="time" id="ntEve" style="width:120px">
+      <label class="note" for="ntMorn">Exam day morning at</label><input type="time" id="ntMorn" style="width:120px">
+    </div>
+    <div class="acts" style="margin-top:12px"><button class="btn l" id="clIcs">Add classes to calendar (repeats weekly)</button><button class="btn l" id="dlIcs2">Add exams to calendar</button></div>
+  </div>
+
+  <h2>Weekly routine</h2>
+  <div class="card noprint">
+    <p class="note" id="clN"></p>
+    <div class="acts" style="margin:0 0 12px;align-items:center">
+      <select class="sel" id="clD" aria-label="Day"><option value="6">Sat</option><option value="0">Sun</option><option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option></select>
+      <input type="time" id="clS" value="09:00" style="width:120px" aria-label="Start time"><input type="time" id="clE" value="10:00" style="width:120px" aria-label="End time">
+      <input id="clT" placeholder="Class, e.g. Calculus" style="flex:1;min-width:140px" aria-label="Class name">
+      <button class="btn l" id="clAdd">Add class</button>
+    </div>
+    <div id="cll"></div>
+  </div>
+
+  <h2>To-do list</h2>
+  <div class="card noprint">
+    <div class="acts" style="margin:0 0 12px"><input id="tdT" placeholder="Assignment, quiz, lab report..." style="flex:1;min-width:160px" aria-label="Task"><input type="date" id="tdD" style="width:150px" aria-label="Due date"><button class="btn l" id="tdAdd">Add task</button></div>
+    <div id="tdS"></div><div id="tdl"></div>
+  </div>
+
+  <h2>Flashcards</h2>
+  <div class="card noprint">
+    <p class="note">Add a question and its answer. Cards you miss come back sooner.</p>
+    <div class="acts" style="margin:0 0 12px"><input id="fcQ" placeholder="Question" style="flex:1;min-width:150px" aria-label="Question"><input id="fcA" placeholder="Answer" style="flex:1;min-width:150px" aria-label="Answer"><button class="btn l" id="fcAdd">Add card</button></div>
+    <div id="fcv"></div>
+  </div>
+
+  <h2>Notes &amp; formulas</h2>
+  <div class="card noprint">
+    <div id="ntl"></div>
+    <div class="acts"><button class="btn l" id="ntAdd">+ Add note</button></div>
+  </div>
+
+  <h2>Next semester planner</h2>
+  <div class="card noprint">
+    <p class="note">Enter next semester's courses and the grade you aim for in each. You will see your semester GPA and the CGPA you would reach.</p>
+    <div class="row3 h" style="grid-template-columns:1fr 70px 90px 28px"><span>Course</span><span>Credit</span><span>Target</span><span></span></div>
+    <div id="npl"></div>
+    <div class="acts"><button class="btn l" id="npAdd">+ Add course</button></div>
+    <div class="res" id="npr" style="margin-top:12px"></div>
+  </div>
+
+  <h2>Smart study tips</h2>
+  <div class="tips">
+    <div class="tip"><em>&#127919;</em><b>Protect high credits</b><p>A 4-credit course moves your CGPA more than a 1-credit lab. Study it first.</p></div>
+    <div class="tip"><em>&#9201;</em><b>25 / 5 sessions</b><p>Study 25 minutes, rest 5. After four rounds, take a longer break.</p></div>
+    <div class="tip"><em>&#128196;</em><b>Past questions first</b><p>Solve old exam papers early. They show what your teacher asks.</p></div>
+    <div class="tip"><em>&#128260;</em><b>Revise in spaced rounds</b><p>Review after 1 day, 3 days, and 7 days. Memory lasts longer.</p></div>
+    <div class="tip"><em>&#128214;</em><b>Mock exam</b><p>Practice with a timer and no notes. Time pressure is a skill.</p></div>
+    <div class="tip"><em>&#128564;</em><b>Sleep before exams</b><p>A full night of sleep beats a last-minute all-nighter.</p></div>
+  </div>
+
+  <h2>Resource Hub <span class="beta">Beta</span></h2>
+  <div class="card noprint">
+    <p class="note">Notes and study guides from high-CGPA students. Sellers stay anonymous. Suggestions are matched on your device to the courses where you lost marks, and your results are never uploaded.</p>
+    <div class="acts" style="margin:0 0 12px"><input id="rq" placeholder="Search course code or subject" style="max-width:320px" aria-label="Search resources"><select class="sel" id="rs2" aria-label="Sort resources"><option value="rate">Top rated</option><option value="price">Lowest price</option></select></div>
+    <div id="rrec"></div>
+    <div id="rall"></div>
+  </div>
+  <div class="card noprint">
+    <h3 class="t">Earn by sharing your notes</h3>
+    <p class="note" id="sq"></p>
+    <div class="steps3">
+      <div><b>1. Apply</b>Send us a message with your CGPA band and the courses you can share.</div>
+      <div><b>2. Get verified</b>We check your result privately. Other students never see who you are.</div>
+      <div><b>3. Share your link</b>Set your Google Drive file to Restricted and send the link to us privately. It is never shown on this site.</div>
+      <div><b>4. Earn</b>A buyer pays us, we give them access, and you receive <span id="sshare"></span>% of the price.</div>
+    </div>
+    <div class="acts" id="sapply" style="margin:0 0 12px"></div>
+    <div class="rules">
+      <div><b>Allowed</b><p class="note">Your own notes, summaries, formula sheets, solved examples, and practice questions you wrote.</p></div>
+      <div><b>Not allowed</b><p class="note">Leaked exam papers, answers to graded work, scanned books, copied content, or anything with names or ID numbers.</p></div>
+    </div>
+  </div>
+
+  <h2>Free resources</h2>
+  <div class="res2">
+    <a href="https://ocw.mit.edu" target="_blank" rel="noopener"><b>MIT OpenCourseWare</b><span>Free lecture notes and problem sets from real university courses.</span></a>
+    <a href="https://www.khanacademy.org" target="_blank" rel="noopener"><b>Khan Academy</b><span>Math, science and basics explained step by step.</span></a>
+    <a href="https://www.coursera.org" target="_blank" rel="noopener"><b>Coursera</b><span>University courses. Financial aid is available.</span></a>
+    <a href="https://www.edx.org" target="_blank" rel="noopener"><b>edX</b><span>Free-to-audit courses from top universities.</span></a>
+    <a href="https://scholar.google.com" target="_blank" rel="noopener"><b>Google Scholar</b><span>Find research papers for projects and thesis.</span></a>
+    <a href="https://www.daad.de" target="_blank" rel="noopener"><b>DAAD</b><span>Scholarships and study programs in Germany.</span></a>
+  </div>
+
+  <h2>Collaborate</h2>
+  <div class="card noprint">
+    <p class="note">Find students in your research area to work with. Everyone stays anonymous. You only see an alias, the idea, and what help is needed. Contact details are never shown on this page.</p>
+    <div class="steps3">
+      <div><b>1. Share</b>Post your idea below. It is sent to the site admin, not shown to the public yet.</div>
+      <div><b>2. Review</b>The admin removes personal details and lists your idea under your alias.</div>
+      <div><b>3. Connect</b>Another student taps Connect. The admin asks you, and only if you agree are you both added to a private chat.</div>
+      <div><b>4. Collaborate</b>Agree on roles and authorship before starting.</div>
+    </div>
+    <div class="acts" style="margin:0 0 12px"><input id="cfQ" placeholder="Search ideas" style="max-width:260px" aria-label="Search ideas"><select class="sel" id="cfA" aria-label="Research area"></select></div>
+    <div id="cfL"></div>
+  </div>
+  <div class="card noprint">
+    <h3 class="t">Share your idea anonymously</h3>
+    <p class="note">Your alias is <b id="cfAl"></b>. Do not write your name, ID, phone number or university here.</p>
+    <datalist id="cfAreas"></datalist>
+    <div class="acts" style="margin:0 0 8px"><input id="cpA" list="cfAreas" placeholder="Research area, e.g. Machine Learning" style="flex:1;min-width:200px" aria-label="Research area"><select class="sel" id="cpL" aria-label="Your level"><option>Undergraduate</option><option>Masters</option><option>PhD</option><option>Other</option></select></div>
+    <input id="cpT" placeholder="Idea title" style="margin-bottom:8px" aria-label="Idea title">
+    <textarea id="cpD" placeholder="Explain your idea in a few sentences: the problem, your approach, and what makes it interesting." aria-label="Idea explanation"></textarea>
+    <input id="cpN" placeholder="What help do you need? e.g. someone to write code or run experiments" style="margin:8px 0" aria-label="Help needed">
+    <div class="acts"><button class="btn" id="cpW">Send via WhatsApp</button><button class="btn l" id="cpM">Send via Messenger</button></div>
+    <div class="rules" style="margin-top:14px">
+      <div><b>Good practice</b><p class="note">Agree on authorship and roles in writing before you start. Keep early talks inside the private group chat.</p></div>
+      <div><b>Please remember</b><p class="note">Ideas shared here are not legally protected. Do not share confidential, unpublished or university-restricted work. Report anyone who makes you uncomfortable to the admin.</p></div>
+    </div>
+  </div>
+
+  <h2>Share with friends</h2>
+  <div class="card noprint" id="shareCard">
+    <p class="note">Know someone who needs this? Send them the link. It takes one tap.</p>
+    <div class="acts"><button class="btn" id="shW">WhatsApp</button><button class="btn l" id="shF">Facebook</button><button class="btn l" id="shT">Telegram</button><button class="btn l" id="shC">Copy link</button></div>
+  </div>
+
+  <h2>Settings & backup</h2>
+  <div class="card">
+    <div id="cloud" hidden><h3 class="t">Cloud sync</h3><p class="note" id="cst"></p><div class="acts" style="margin:0 0 14px"><button class="btn" id="cin">Sign in with Google</button><button class="btn l" id="cout" hidden>Sign out</button></div></div>
+    <h3 class="t">Grading scale</h3>
+    <div class="acts" style="margin:0 0 6px"><select class="sel" id="scPre" aria-label="Grading scale"><option value="ugc">Bangladesh UGC (A+ = 80+, 4.00 max)</option><option value="us">Simple US scale (A = 93+, A- = 3.7)</option><option value="strict">Same grade points, stricter cutoffs (A+ = 90+)</option><option value="custom">Custom (edit marks below)</option></select></div>
+    <p class="note">Universities use different scales. Choose the closest one, then fine-tune the marks under "Marks to grade scale". Check your own university's rule.</p>
+    <h3 class="t">Retake rule</h3>
+    <div class="acts" style="margin:0 0 6px"><select class="sel" id="rt" aria-label="Retake rule"><option value="all">Count every attempt</option><option value="replace">Latest attempt replaces earlier ones</option><option value="best">Best attempt counts</option><option value="cap">Latest attempt counts, grade capped</option></select>
+    <select class="sel" id="cap" aria-label="Maximum grade for a retake" hidden><option value="1">Cap at A</option><option value="2">Cap at A-</option><option value="3">Cap at B+</option><option value="4">Cap at B</option><option value="5">Cap at B-</option><option value="6">Cap at C+</option><option value="7">Cap at C</option></select></div>
+    <p class="note">Repeated courses are matched by course code (like CCE-1103) or the same course name. This changes your CGPA only. Semester GPA stays as recorded. Check your university's rule.</p>
+    <details style="margin-top:14px"><summary>Marks to grade scale (edit to match your university)</summary>
+      <p class="note">Default is the common Bangladesh UGC scale. Change the minimum marks for each grade if your university is different.</p>
+      <div class="sc" id="scale"></div>
+    </details>
+    <p class="note" style="margin-top:14px">Your data is saved only in this browser on this device. Download a backup so you never lose it.</p>
+    <div class="acts">
+      <button class="btn l" id="exp">Download backup</button>
+      <button class="btn l" id="csv">Download CSV</button>
+      <button class="btn l" id="shr">Share my result card</button>
+      <button class="btn l" id="tourBtn">Take the tour again</button>
+      <button class="btn l" id="imp">Restore backup</button>
+      <button class="btn d" id="rst">Delete all data</button>
+      <input type="file" id="file" accept=".json" hidden>
+    </div>
+  </div>
+</main>
+<div class="wrap noprint">
+  <h2>Common questions</h2>
+  <div class="card" id="faq"></div>
+  <h2>Feedback</h2>
+  <div class="card"><p class="note">Found a bug or have an idea? Tell us. It helps every student.</p><div class="acts" id="fb"></div></div>
+  <h2 id="privacy">Privacy policy</h2>
+  <div class="card note">
+    <ul style="padding-left:20px;margin:0">
+      <li><b>Your results stay on your device.</b> Courses, marks and settings are saved in your own browser. We do not receive them.</li>
+      <li><b>Cloud sync is optional.</b> If the site owner turns it on and you sign in with Google, your data is stored in Google Firebase under your account, and only you can read it.</li>
+      <li><b>Resource Hub.</b> When you tap a button, WhatsApp or Messenger opens with a message you can edit. We only receive what you send. Your results are not attached.</li>
+      <li><b>Visitor counting.</b> The site may use a cookie-free analytics tool to count visits. It does not collect your name or results.</li>
+      <li><b>We do not sell your data.</b> You can delete everything with "Delete all data" or by clearing your browser data.</li>
+    </ul>
+  </div>
+  <h2 id="terms">Terms of use</h2>
+  <div class="card note">
+    <ul style="padding-left:20px;margin:0">
+      <li>The calculator gives estimates. Your university's official transcript is always the final result.</li>
+      <li>Resource Hub sellers must own what they share. Leaked exam papers, answers to graded work and copied or scanned books are not allowed, and the site owner may remove any listing.</li>
+      <li>Purchases are handled by message with the site owner. Prices, access and refunds are as agreed in that conversation.</li>
+      <li>We do not promise any grade or income. The site is provided as is, and you use it at your own risk.</li>
+      <li>By using the site you agree to these terms.</li>
+    </ul>
+  </div>
+</div>
+<div class="tour noprint" id="tour" hidden role="dialog" aria-modal="true" aria-labelledby="tourT"><div class="tourc"><div class="note" id="tourN"></div><h3 id="tourT"></h3><p id="tourP"></p><div class="acts"><button class="btn" id="tourNext">Next</button><button class="btn l" id="tourSkip">Skip</button></div></div></div>
+<div class="bkb noprint" id="bkb" hidden><span>Back up your data so you never lose it.</span><button class="btn sm" id="bkGo">Download backup</button><button class="btn l sm" id="bkLater">Later</button></div>
+<div class="toast noprint" id="toast" hidden role="status"></div>
+<footer>Results are estimates. Check your official transcript for final numbers.</footer>
+
+<script>
+var KEY="cgpa-tracker-v1";
+var GR=[["A+",4],["A",3.75],["A-",3.5],["B+",3.25],["B",3],["B-",2.75],["C+",2.5],["C",2.25],["D",2],["F",0]];
+var MIN=[80,75,70,65,60,55,50,45,40,0];
+var S;
+function def(){return{sem:[{name:"Semester 1",c:[{n:"",cr:"",m:""},{n:"",cr:"",m:""},{n:"",cr:"",m:""},{n:"",cr:"",m:""}]}],tg:3.5,tc:160,rs:6,nc:15,min:MIN.slice()}}
+function load(){try{var r=localStorage.getItem(KEY);S=r?JSON.parse(r):def()}catch(e){S=def()}if(!S.min)S.min=MIN.slice()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(typeof cloudSave==="function")cloudSave()}
+function gi(m){for(var i=0;i<GR.length;i++)if(m>=S.min[i])return i;return GR.length-1}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
+function f2(n){return n.toFixed(2)}
+function semStat(s){var cr=0,pt=0;s.c.forEach(function(c){var k=parseFloat(c.cr),m=parseFloat(c.m);if(k>0&&!isNaN(m)&&c.m!==""){cr+=k;pt+=k*GR[gi(m)][1]}});return{cr:cr,pt:pt,gpa:cr?pt/cr:null}}
+var RT=new Map();
+function actGP(c){var m=parseFloat(c.m);return(c.m!==""&&!isNaN(m))?GR[gi(m)][1]:null}
+function ckey(c){var n=(c.n||"").trim().toUpperCase();if(!n)return null;var m=n.match(/[A-Z]{2,6}[- ]?\d{3,4}/);return m?m[0].replace(/[- ]/g,""):n.replace(/\s+/g," ")}
+function rules(gf,sems){
+  var map=new Map(),g={},rt=S.rt||"all";sems=sems||S.sem;
+  sems.forEach(function(s,i){s.c.forEach(function(c,j){
+    var gp=gf(c,i,j),k=parseFloat(c.cr);if(gp===null||!(k>0))return;
+    map.set(c,{use:true,gp:gp});var key=ckey(c);if(key)(g[key]=g[key]||[]).push(c);
+  })});
+  if(rt!=="all")Object.keys(g).forEach(function(key){
+    var a=g[key];if(a.length<2)return;
+    if(rt==="best"){var b=a[0];a.forEach(function(c){if(map.get(c).gp>=map.get(b).gp)b=c});a.forEach(function(c){if(c!==b)map.get(c).use=false})}
+    else{a.slice(0,-1).forEach(function(c){map.get(c).use=false});if(rt==="cap"){var l=map.get(a[a.length-1]);l.gp=Math.min(l.gp,GR[S.cap===undefined?4:S.cap][1])}}
+  });
+  return map;
+}
+function sumMap(map,noF){var cr=0,pt=0;map.forEach(function(o,c){var k=parseFloat(c.cr);if(o.use&&k>0&&!(noF&&o.gp===0)){cr+=k;pt+=k*o.gp}});return{cr:cr,pt:pt,cg:cr?pt/cr:0}}
+function tot(){return sumMap(RT)}
+
+function render(){
+  gradesApply();if(!S.wi)S.wi={};if(!S.ex)S.ex=exDef();if(!S.rt)S.rt="all";if(S.cap===undefined)S.cap=4;if(!S.rated)S.rated={};if(!S.at)S.at=[{n:"",h:"",a:""}];if(S.atReq===undefined)S.atReq=75;if(!S.dl)S.dl=[];if(!S.st)S.st={d:{}};if(!S.lang)S.lang="en";if(!S.cls)S.cls=[];if(!S.todo)S.todo=[];if(!S.fc)S.fc=[];if(!S.notes)S.notes=[{c:"",t:""}];if(!S.np)S.np=[{n:"",cr:"",g:"1"}];if(!S.nt)S.nt={on:false,lead:30,eve:"20:00",morn:"07:00"};if(!S.nf)S.nf={};if(!S.alias)S.alias="Researcher-"+Math.random().toString(36).slice(2,5).toUpperCase();if(!S.first)S.first=Date.now();
+  var h="";
+  S.sem.forEach(function(s,i){
+    h+='<div class="card"><div class="sh"><input class="nm" data-s="'+i+'" data-f="sn" value="'+esc(s.name)+'" aria-label="Semester name"><span class="gpa" id="g'+i+'"></span><button class="x" data-ds="'+i+'" aria-label="Delete semester">&#128465;</button></div>';
+    h+='<div class="row h"><span>Course</span><span>Credit</span><span>Marks</span><span>Grade</span><span></span></div>';
+    s.c.forEach(function(c,j){
+      h+='<div class="row"><input data-s="'+i+'" data-c="'+j+'" data-f="n" value="'+esc(c.n)+'" placeholder="Course name" aria-label="Course name"><input type="number" step="0.5" min="0" inputmode="decimal" data-s="'+i+'" data-c="'+j+'" data-f="cr" value="'+esc(c.cr)+'" placeholder="3" aria-label="Credit"><input type="number" min="0" max="100" inputmode="decimal" data-s="'+i+'" data-c="'+j+'" data-f="m" value="'+esc(c.m)+'" placeholder="0-100" aria-label="Marks"><span class="g" id="gr'+i+'_'+j+'">-</span><button class="x" data-dc="'+i+'_'+j+'" aria-label="Remove course">&times;</button></div>';
+    });
+    h+='<button class="btn l" data-ac="'+i+'">+ Add course</button><div class="goal"><label for="go'+i+'">Semester GPA goal</label><input id="go'+i+'" type="number" step="0.01" min="0" max="4" inputmode="decimal" data-s="'+i+'" data-f="goal" value="'+esc(s.goal||"")+'" placeholder="3.75"><span id="sg'+i+'"></span></div></div>';
+  });
+  document.getElementById("sems").innerHTML=h;
+  document.getElementById("tg").value=S.tg;document.getElementById("tc").value=S.tc;document.getElementById("rs").value=S.rs;document.getElementById("nc").value=S.nc;
+  var sc="";GR.forEach(function(g,i){sc+='<div>'+g[0]+' ('+g[1]+') from<input type="number" data-mi="'+i+'" value="'+S.min[i]+'" '+(i==GR.length-1?"disabled":"")+' aria-label="Minimum marks for '+g[0]+'"></div>'});
+  document.getElementById("scale").innerHTML=sc;
+  document.getElementById("rt").value=S.rt;document.getElementById("scPre").value=S.pre||(S.min.join()===PRESETS.ugc.min.join()?"ugc":"custom");document.getElementById("cap").value=S.cap;document.getElementById("cap").hidden=S.rt!=="cap";
+  exList();toolsRender();wiList();calc();applyLang();
+}
+
+function need(gp){for(var i=GR.length-1;i>=0;i--)if(GR[i][1]>=gp-1e-9)return i;return 0}
+function calc(){
+  RT=rules(actGP);
+  S.sem.forEach(function(s,i){
+    var t=semStat(s),el=document.getElementById("g"+i);
+    if(el)el.textContent=t.gpa===null?"GPA -":"GPA "+f2(t.gpa)+" | "+t.cr+" cr";goalMsg(s,i,t);
+    s.c.forEach(function(c,j){
+      var g=document.getElementById("gr"+i+"_"+j);if(!g)return;
+      var m=parseFloat(c.m);
+      if(c.m===""||isNaN(m)){g.textContent="-";g.className="g"}
+      else{var k=gi(m);g.textContent=GR[k][0];g.className="g"+(GR[k][1]>=3.5?" a":GR[k][1]===0?" f":"")}
+    });
+  });
+  var T=tot(),arc=document.getElementById("arc");
+  document.getElementById("cg").textContent=f2(T.cg);
+  arc.style.strokeDashoffset=326.7*(1-Math.min(T.cg/4,1));
+  document.getElementById("sc").textContent=T.cr;
+  var withData=S.sem.filter(function(s){return semStat(s).cr>0});
+  document.getElementById("sn").textContent=withData.length;
+  document.getElementById("sl").textContent=withData.length?f2(semStat(withData[withData.length-1]).gpa):"-";
+  plan(T);insights(T);lvl(T);wiCalc();exCalc();hubRender();npCalc();predRender();dpRender();spRender();cvRender();save();
+}
+
+function shortName(n){return String(n).replace(/\s*\(.*\)/,"").slice(0,12)}
+function gAxis(W,H,pl,pr,Y,vals){var v="";vals.forEach(function(a){v+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(a)+'" y2="'+Y(a)+'" stroke="var(--line)"/><text x="4" y="'+(Y(a)+4)+'" font-size="10" fill="var(--mute)">'+(Math.round(a*100)/100)+'</text>'});return v}
+function gBars(L,A,B){
+  var W=460,H=200,n=L.length,pl=30,pb=40,pt=16,gw=(W-pl-10)/n,bw=Math.min(26,gw*.34);
+  function Y(v){return H-pb-(v/4)*(H-pt-pb)}
+  var v='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;margin-top:12px" role="img" aria-label="Actual and what-if GPA by semester">'+gAxis(W,H,pl,10,Y,[0,2,4]);
+  L.forEach(function(l,i){var cx=pl+gw*(i+.5);
+    [[A[i],cx-bw-1,"var(--mute)"],[B[i],cx+1,"var(--p2)"]].forEach(function(q){if(q[0]===null)return;v+='<rect x="'+q[1]+'" y="'+Y(q[0])+'" width="'+bw+'" height="'+(Y(0)-Y(q[0]))+'" rx="4" fill="'+q[2]+'"/><text x="'+(q[1]+bw/2)+'" y="'+(Y(q[0])-4)+'" text-anchor="middle" font-size="9" fill="var(--ink)">'+f2(q[0])+'</text>'});
+    v+='<text x="'+cx+'" y="'+(H-pb+13)+'" text-anchor="middle" font-size="10" fill="var(--mute)">'+esc(l)+'</text>'});
+  v+='<rect x="30" y="'+(H-14)+'" width="10" height="10" rx="2" fill="var(--mute)"/><text x="44" y="'+(H-5)+'" font-size="10" fill="var(--mute)">Actual GPA</text><rect x="130" y="'+(H-14)+'" width="10" height="10" rx="2" fill="var(--p2)"/><text x="144" y="'+(H-5)+'" font-size="10" fill="var(--mute)">What-if GPA</text>';
+  return v+'</svg>';
+}
+function pathChart(T,tc,rs,tg){
+  var rem=tc-T.cr;rs=Math.min(Math.round(rs),12);
+  if(!(rem>0)||!(rs>=1)||!(T.cr>0)||!(tg>0))return"";
+  var per=rem/rs,req=(tg*tc-T.pt)/rem;
+  function line(gp){var a=[];for(var k=0;k<=rs;k++)a.push((T.pt+gp*per*k)/(T.cr+per*k));return a}
+  var S1=[{n:"All A+ (4.00)",c:"var(--good)",d:line(4)},{n:"Needed ("+f2(Math.max(0,Math.min(req,4)))+")",c:"var(--p)",d:line(Math.max(0,Math.min(req,4))),w:3.5},{n:"All B (3.00)",c:"var(--mute)",d:line(3),dash:1}];
+  var all=[tg];S1.forEach(function(s){all=all.concat(s.d)});
+  var lo=Math.max(0,Math.floor((Math.min.apply(null,all)-.2)*4)/4),hi=4;
+  var W=460,H=230,pl=34,pr=14,pt=18,pb=62;
+  function X(k){return pl+(W-pl-pr)*k/rs}
+  function Y(v){return H-pb-((v-lo)/(hi-lo))*(H-pt-pb)}
+  var v='<h4 style="margin:16px 0 4px;font-family:Sora,sans-serif">Path to your target</h4><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto" role="img" aria-label="Projected CGPA over remaining semesters">'+gAxis(W,H,pl,pr,Y,[lo,lo+(hi-lo)/3,lo+2*(hi-lo)/3,hi]);
+  if(tg>=lo&&tg<=hi)v+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(tg)+'" y2="'+Y(tg)+'" stroke="var(--warn)" stroke-dasharray="5 4"/><text x="'+(W-pr)+'" y="'+(Y(tg)-4)+'" text-anchor="end" font-size="10" fill="var(--warn)">Target '+f2(tg)+'</text>';
+  S1.forEach(function(s){v+='<polyline fill="none" stroke="'+s.c+'" stroke-width="'+(s.w||2)+'" stroke-linejoin="round"'+(s.dash?' stroke-dasharray="4 4"':'')+' points="'+s.d.map(function(y,k){return X(k)+","+Y(y)}).join(" ")+'"/>';
+    var l=s.d.length-1;v+='<circle cx="'+X(l)+'" cy="'+Y(s.d[l])+'" r="3.5" fill="'+s.c+'"/><text x="'+(X(l)-4)+'" y="'+(Y(s.d[l])-6)+'" text-anchor="end" font-size="10" font-weight="600" fill="var(--ink)">'+f2(s.d[l])+'</text>'});
+  for(var k=0;k<=rs;k++)v+='<text x="'+X(k)+'" y="'+(H-pb+14)+'" text-anchor="middle" font-size="10" fill="var(--mute)">'+(k?"Sem +"+k:"Now")+'</text>';
+  S1.forEach(function(s,i){v+='<line x1="'+(pl+i*135)+'" x2="'+(pl+i*135+16)+'" y1="'+(H-18)+'" y2="'+(H-18)+'" stroke="'+s.c+'" stroke-width="3"/><text x="'+(pl+i*135+20)+'" y="'+(H-14)+'" font-size="10" fill="var(--mute)">'+s.n+'</text>'});
+  return v+'</svg><p class="note">Assumes equal credits each remaining semester and the same average GPA every semester.</p>';
+}
+/* ===== RESOURCE HUB (site owner edits this part) ===== */
+var CONTACT_WA="8801XXXXXXXXX",CONTACT_MS="YourPageUsername",SELLER_SHARE=70,MIN_SELLER_CG=3.5;
+/* These 4 are SAMPLES (sample:true). Replace them with real, verified listings. Never put a Google link here. */
+var RESOURCES=[
+ {id:"R1",course:"MATH-1101",subject:"Calculus",title:"Calculus I: formula sheet and solved examples",desc:"Limits, derivatives and integrals with step-by-step examples.",price:120,alias:"Student-K7",cg:"3.75+",rating:4.8,count:23,tags:["math","calculus"],sample:true},
+ {id:"R2",course:"PHY-1101",subject:"Physics",title:"Physics I: short notes for mid and final",desc:"Waves, optics and heat in one clear summary with practice questions.",price:100,alias:"Student-M2",cg:"3.50+",rating:4.6,count:14,tags:["physics"],sample:true},
+ {id:"R3",course:"CCE-1103",subject:"Basic Electrical Engineering",title:"Basic Electrical: circuit solving guide",desc:"Ohm, Kirchhoff and network theorems with worked examples.",price:150,alias:"Student-T9",cg:"3.75+",rating:4.9,count:31,tags:["electrical","circuits"],sample:true},
+ {id:"R4",course:"CCE-1105",subject:"Computer Fundamentals and Programming",title:"C programming: practice problems with ideas",desc:"Loops, arrays and functions with explained solutions.",price:100,alias:"Student-B4",cg:"3.50+",rating:4.7,count:19,tags:["programming","c"],sample:true}
+];
+function hubOK(){return !/X{3}/.test(CONTACT_WA)&&CONTACT_MS!=="YourPageUsername"}
+function stars(r){var n=Math.round(r),s="";for(var i=1;i<=5;i++)s+=i<=n?"\u2605":"\u2606";return s}
+function cBtn(label,msg,cls,ms){
+  if(!hubOK())return'<button class="btn '+cls+' sm" data-nc="1">'+label+'</button>';
+  var href=ms?"https://m.me/"+CONTACT_MS+"?text="+encodeURIComponent(msg):"https://wa.me/"+CONTACT_WA+"?text="+encodeURIComponent(msg);
+  return'<a class="btn '+cls+' sm" href="'+href+'" target="_blank" rel="noopener">'+label+'</a>';
+}
+function weakList(){
+  var out=[];
+  S.sem.forEach(function(s){s.c.forEach(function(c){
+    var k=ckey(c),cr=parseFloat(c.cr),g=actGP(c);if(!k||!(cr>0))return;
+    if(g===null)out.push({k:k,n:c.n,gp:2.5,pending:true});
+    else if(g<3)out.push({k:k,n:c.n,gp:g,g:GR[gi(parseFloat(c.m))][0]});
+  })});
+  return out;
+}
+function matchWeak(r,w){
+  var rk=r.course.toUpperCase().replace(/[- ]/g,""),sj=(r.subject||"").toUpperCase(),best=null;
+  w.forEach(function(x){if(x.k===rk||(sj&&x.n.toUpperCase().indexOf(sj)>=0)){if(!best||x.gp<best.gp)best=x}});
+  return best;
+}
+function rCard(r,why){
+  var msg="Hi! I want access to resource "+r.id+" ("+r.title+"). Please tell me how to pay.",rated=S.rated[r.id],h;
+  h='<div class="rc"><div><span class="chip">'+esc(r.course)+'</span> <span class="chip g">Top student &middot; CGPA '+esc(r.cg)+'</span>'+(r.sample?' <span class="chip s">Sample</span>':'')+'</div><h4>'+esc(r.title)+'</h4><p class="note" style="margin:0">'+esc(r.desc)+'</p>';
+  h+='<div class="stars" role="img" aria-label="'+r.rating+' out of 5">'+stars(r.rating)+' <b>'+r.rating.toFixed(1)+'</b> <span class="note">('+r.count+' ratings) &middot; '+esc(r.alias)+'</span></div>';
+  if(why)h+='<p class="why">'+esc(why)+'</p>';
+  h+='<div class="rf"><b>&#2547;'+r.price+'</b>'+(r.sample?'<button class="btn sm" disabled>Coming soon</button>':cBtn("WhatsApp",msg,"")+cBtn("Messenger",msg,"l",1)+'<button class="btn l sm" data-rt="'+r.id+'">'+(rated?"You rated "+rated+"\u2605":"Rate")+'</button>')+'</div>';
+  if(!r.sample)h+='<div class="rate" id="rt_'+r.id+'" hidden>'+[1,2,3,4,5].map(function(n){return'<button data-rv="'+r.id+'_'+n+'" aria-label="'+n+' stars">'+n+'\u2605</button>'}).join("")+'</div>';
+  return h+'</div>';
+}
+function hubRender(){
+  var q=document.getElementById("rq").value.toLowerCase(),so=document.getElementById("rs2").value,w=weakList(),rec=[],h="";
+  RESOURCES.forEach(function(r){var m=matchWeak(r,w);if(m)rec.push({r:r,m:m})});
+  rec.sort(function(a,b){return a.m.gp-b.m.gp||b.r.rating-a.r.rating});
+  if(rec.length)h='<h3 class="t">Recommended for you</h3><div class="rgrid">'+rec.map(function(x){return rCard(x.r,x.m.pending?"You have "+x.m.n.slice(0,40)+" coming up":"You got "+x.m.g+" in "+x.m.n.slice(0,40))}).join("")+'</div>';
+  else h='<p class="note">'+(w.length?"No resource matches your weaker courses yet. Check back soon.":"Add your results above and I will suggest resources for the courses you found hard.")+'</p>';
+  document.getElementById("rrec").innerHTML=h;
+  var list=RESOURCES.filter(function(r){return!q||(r.course+" "+r.subject+" "+r.title+" "+(r.tags||[]).join(" ")).toLowerCase().indexOf(q)>=0});
+  list.sort(function(a,b){return so==="price"?a.price-b.price:b.rating-a.rating});
+  document.getElementById("rall").innerHTML='<h3 class="t" style="margin-top:16px">All resources</h3>'+(list.length?'<div class="rgrid">'+list.map(function(r){return rCard(r,"")}).join("")+'</div>':'<p class="note">Nothing found. Try another course code.</p>')+(RESOURCES.every(function(r){return r.sample})?'<p class="note">These are sample listings to show how the hub will look. Real resources are coming soon.</p>':'');
+  var T=tot(),ok=T.cr>0&&T.cg>=MIN_SELLER_CG,band=T.cr>0?(Math.floor(T.cg*4+1e-9)/4).toFixed(2)+"+":"";
+  document.getElementById("sq").textContent="Open to students with a CGPA of "+f2(MIN_SELLER_CG)+" or higher. "+(T.cr>0?(ok?"Your CGPA of "+f2(T.cg)+" qualifies, so you can apply.":"Your CGPA is "+f2(T.cg)+" now. Reach "+f2(MIN_SELLER_CG)+" to apply."):"Add your results above to check if you qualify.");
+  document.getElementById("sshare").textContent=SELLER_SHARE;
+  var am="Hi! I would like to become a resource seller."+(band?" My CGPA band: "+band+".":"")+" Courses I can share: (write here). I can send my result privately for checking.";
+  document.getElementById("sapply").innerHTML=cBtn("Apply on WhatsApp",am,"")+cBtn("Apply on Messenger",am,"l",1);
+}
+/* ===== EXTRA SETTINGS (site owner): FEEDBACK_URL = a Google Form link, CF_TOKEN = Cloudflare Web Analytics token ===== */
+var FEEDBACK_URL="",CF_TOKEN="",BASE_TITLE=document.title;
+function dkey(d){d=d||new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function dlFile(name,data,type){var a=document.createElement("a");a.href=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+
+/* attendance */
+function atList(){
+  document.getElementById("atReq").value=S.atReq;
+  document.getElementById("atl").innerHTML=S.at.map(function(p,i){return'<div class="row3"><input data-ati="'+i+'" data-atf="n" value="'+esc(p.n)+'" placeholder="Course name" aria-label="Course name"><input type="number" min="0" inputmode="numeric" data-ati="'+i+'" data-atf="h" value="'+esc(p.h)+'" aria-label="Classes held"><input type="number" min="0" inputmode="numeric" data-ati="'+i+'" data-atf="a" value="'+esc(p.a)+'" aria-label="Classes attended"><button class="x" data-atd="'+i+'" aria-label="Remove course">&times;</button></div>'}).join("");
+}
+function atCalc(){
+  var r=Math.min((parseFloat(S.atReq)||75)/100,.99),h="";
+  S.at.forEach(function(p){
+    var H=parseFloat(p.h),A=parseFloat(p.a);if(!(H>0)||isNaN(A)||A<0)return;
+    A=Math.min(A,H);var pc=A/H,ok=pc>=r-1e-9,msg;
+    if(ok){var m=Math.floor(A/r-H+1e-9);msg="Safe. You can miss "+m+" more class"+(m===1?"":"es")+" and stay above "+Math.round(r*100)+"%."}
+    else{var n=Math.ceil((r*H-A)/(1-r)-1e-9);msg="Below the limit. Attend the next "+n+" classes in a row to reach "+Math.round(r*100)+"%."}
+    h+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:14px"><b>'+esc(p.n||"Course")+'</b><span>'+(pc*100).toFixed(1)+'% ('+A+'/'+H+')</span></div><div class="bar" style="margin:4px 0"><i style="width:'+Math.min(pc*100,100)+'%;'+(ok?"":"background:var(--bad)")+'"></i></div><div class="note">'+msg+'</div></div>';
+  });
+  document.getElementById("atr").innerHTML=h||'<p class="note">Enter classes held and attended to see your attendance.</p>';
+}
+
+/* exams and deadlines */
+/* exams and deadlines (with type and time) */
+function dlList(){
+  document.getElementById("dll").innerHTML=S.dl.map(function(p,i){var k=p.k||"Exam";return'<div class="evt"><div class="evr1"><input data-dli="'+i+'" data-dlf="t" value="'+esc(p.t)+'" placeholder="e.g. Calculus final" aria-label="Event title"><select data-dli="'+i+'" data-dlf="k" aria-label="Type"><option'+(k==="Exam"?" selected":"")+'>Exam</option><option'+(k==="Deadline"?" selected":"")+'>Deadline</option></select><button class="x" data-dld="'+i+'" aria-label="Remove event">&times;</button></div><div class="evr2"><input type="date" data-dli="'+i+'" data-dlf="d" value="'+esc(p.d)+'" aria-label="Date"><input type="time" data-dli="'+i+'" data-dlf="m" value="'+esc(p.m||"")+'" aria-label="Time"><input type="number" min="0" inputmode="decimal" data-dli="'+i+'" data-dlf="h" value="'+esc(p.h)+'" placeholder="Study hours" aria-label="Study hours needed"></div></div>'}).join("");
+}
+function dlCalc(){
+  var today=new Date();today.setHours(0,0,0,0);var ev=[];
+  S.dl.forEach(function(p,i){if(!p.d)return;var d=new Date(p.d+"T00:00:00");if(isNaN(d))return;ev.push({i:i,t:p.t||"Untitled",d:p.d,m:p.m||"",k:p.k||"Exam",days:Math.round((d-today)/864e5),h:parseFloat(p.h)})});
+  ev.sort(function(a,b){return a.days-b.days||(a.m<b.m?-1:1)});
+  document.getElementById("dlr").innerHTML=ev.length?ev.map(function(e){
+    var lab=e.days<0?"Passed":e.days===0?"Today":e.days+" day"+(e.days===1?"":"s"),col=e.days<0?"var(--mute)":e.days<=3?"var(--bad)":e.days<=7?"var(--warn)":"var(--good)",sug=(e.days>0&&e.h>0)?" &middot; about "+(e.h/e.days).toFixed(1)+" h/day":"";
+    return'<div class="imp"><span><span class="chip">'+esc(e.k)+'</span> <b style="color:var(--ink)">'+esc(e.t)+'</b> <span class="note">'+esc(e.d)+(e.m?" "+esc(e.m):"")+'</span><br><button class="btn l sm" data-ics="'+e.i+'" style="margin-top:6px">Add to calendar</button></span><b style="color:'+col+'">'+lab+sug+'</b></div>'}).join(""):'<p class="note">Add an exam or deadline with a date to start the countdown.</p>';
+  cdTick();erRender();spRender();
+}
+function ymdhm(d){return d.getFullYear()+("0"+(d.getMonth()+1)).slice(-2)+("0"+d.getDate()).slice(-2)+"T"+("0"+d.getHours()).slice(-2)+("0"+d.getMinutes()).slice(-2)+"00"}
+function icsClean(t){return String(t||"Event").replace(/[,;\r\n]/g," ")}
+function icsDownload(list){
+  list=list.filter(function(e){return e&&e.d});if(!list.length)return;
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//CGPA Tracker//EN"],st=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
+  list.forEach(function(e,i){
+    var t=icsClean(e.t),k=e.k||"Exam";
+    L.push("BEGIN:VEVENT","UID:cgpa-"+e.d+"-"+i+"@tracker","DTSTAMP:"+st,"SUMMARY:"+k+": "+t);
+    if(e.m){var a=new Date(e.d+"T"+e.m+":00"),b=new Date(a.getTime()+2*36e5);
+      L.push("DTSTART:"+ymdhm(a),"DTEND:"+ymdhm(b),"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:Tomorrow: "+t,"END:VALARM","BEGIN:VALARM","TRIGGER:-PT1H","ACTION:DISPLAY","DESCRIPTION:In 1 hour: "+t,"END:VALARM")}
+    else{var nd=new Date(e.d+"T00:00:00");nd.setDate(nd.getDate()+1);
+      L.push("DTSTART;VALUE=DATE:"+e.d.replace(/-/g,""),"DTEND;VALUE=DATE:"+dkey(nd).replace(/-/g,""),"BEGIN:VALARM","TRIGGER:-PT4H","ACTION:DISPLAY","DESCRIPTION:Tomorrow: "+t,"END:VALARM","BEGIN:VALARM","TRIGGER:PT7H","ACTION:DISPLAY","DESCRIPTION:Today: "+t,"END:VALARM")}
+    L.push("END:VEVENT");
+  });
+  L.push("END:VCALENDAR");dlFile("exams-and-deadlines.ics",L.join("\r\n"),"text/calendar");
+}
+function clsIcs(){
+  if(!S.cls.length){toast("Add your classes first.");return}
+  var BY={6:"SA",0:"SU",1:"MO",2:"TU",3:"WE",4:"TH",5:"FR"},now=new Date(),st=now.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z",lead=(S.nt&&S.nt.lead)||30,ev=hmm(S.nt&&S.nt.eve||"20:00"),
+      L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//CGPA Tracker//EN"];
+  S.cls.forEach(function(c,i){
+    var p=c.s.split(":"),q=c.e.split(":"),dd=(c.d-now.getDay()+7)%7,a=new Date(now.getFullYear(),now.getMonth(),now.getDate()+dd,+p[0],+p[1]),b=new Date(now.getFullYear(),now.getMonth(),now.getDate()+dd,+q[0],+q[1]),before=1440-ev+hmm(c.s);
+    if(b<=a)b=new Date(a.getTime()+36e5);
+    L.push("BEGIN:VEVENT","UID:cgpa-class-"+i+"-"+c.d+c.s.replace(":","")+"@tracker","DTSTAMP:"+st,"SUMMARY:Class: "+icsClean(c.t),"DTSTART:"+ymdhm(a),"DTEND:"+ymdhm(b),"RRULE:FREQ=WEEKLY;BYDAY="+BY[c.d],
+      "BEGIN:VALARM","TRIGGER:-PT"+lead+"M","ACTION:DISPLAY","DESCRIPTION:Class starts soon: "+icsClean(c.t),"END:VALARM",
+      "BEGIN:VALARM","TRIGGER:-PT"+before+"M","ACTION:DISPLAY","DESCRIPTION:Tomorrow at "+c.s+": "+icsClean(c.t),"END:VALARM","END:VEVENT");
+  });
+  L.push("END:VCALENDAR");dlFile("class-routine.ics",L.join("\r\n"),"text/calendar");
+}
+/* reminders (work while the site is open or installed) and exam countdown clock */
+function hmm(s){var p=String(s||"0:0").split(":");return(+p[0]||0)*60+(+p[1]||0)}
+function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(function(){t.hidden=true},12000)}
+function notify(title,body,tag){
+  toast(title+": "+body);
+  if(!(window.Notification&&Notification.permission==="granted"))return;
+  var show=function(){try{new Notification(title,{body:body,tag:tag})}catch(e){}};
+  try{
+    if(navigator.serviceWorker&&navigator.serviceWorker.getRegistration)navigator.serviceWorker.getRegistration().then(function(r){if(r&&r.showNotification)r.showNotification(title,{body:body,tag:tag,icon:"icon-192.png"});else show()}).catch(show);
+    else show();
+  }catch(e){show()}
+}
+function ntCheck(){
+  var N=S.nt;if(!N||!N.on)return;
+  var now=new Date(),today=dkey(now),mins=now.getHours()*60+now.getMinutes(),changed=false;
+  function fire(k,t,b){if(S.nf[k])return;S.nf[k]=now.getTime();changed=true;notify(t,b,k)}
+  S.cls.forEach(function(c){
+    if(c.d!==now.getDay())return;var st=hmm(c.s);
+    if(mins>=st-N.lead&&mins<st)fire("c|"+today+"|"+c.s+"|"+c.t,"Class soon",c.t+" starts at "+c.s+" ("+(st-mins)+" min left).");
+  });
+  S.dl.forEach(function(p,i){
+    if(p.d!==today)return;
+    if(p.m&&mins>=hmm(p.m)-60&&mins<hmm(p.m))fire("e1|"+today+"|"+i,(p.k||"Exam")+" in 1 hour",(p.t||"Event")+" starts at "+p.m+".");
+    if(mins>=hmm(N.morn)&&(!p.m||mins<hmm(p.m)))fire("em|"+today+"|"+i,(p.k||"Exam")+" today",(p.t||"Event")+(p.m?" at "+p.m:"")+". Good luck!");
+  });
+  if(mins>=hmm(N.eve)){
+    var tm=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1),tk=dkey(tm),
+        ex=S.dl.filter(function(p){return p.d===tk}),cl=S.cls.filter(function(c){return c.d===tm.getDay()}).sort(function(a,b){return a.s<b.s?-1:1});
+    if(ex.length)fire("ee|"+tk,"Tomorrow: "+ex.map(function(p){return p.k||"Exam"}).filter(function(x,i,a){return a.indexOf(x)===i}).join(" and "),ex.map(function(p){return(p.t||"Event")+(p.m?" at "+p.m:"")}).join(", ")+". Time to prepare.");
+    if(cl.length)fire("ce|"+tk,"Tomorrow's classes",cl.map(function(c){return c.s+" "+c.t}).join(", "));
+  }
+  Object.keys(S.nf).forEach(function(k){if(now.getTime()-S.nf[k]>3*864e5){delete S.nf[k];changed=true}});
+  if(changed)save();
+}
+function ntUI(){
+  var N=S.nt,perm=window.Notification?Notification.permission:"unsupported";
+  document.getElementById("ntOn").textContent=N.on?"Turn off reminders":"Turn on reminders";
+  document.getElementById("ntLead").value=String(N.lead);document.getElementById("ntEve").value=N.eve;document.getElementById("ntMorn").value=N.morn;
+  document.getElementById("ntS").textContent=!N.on?"Reminders are off.":perm==="granted"?"On. Notifications are allowed.":"On, with in-page alerts only. Allow notifications in your browser settings for pop-ups.";
+}
+function nextExam(){
+  var now=Date.now(),best=null;
+  S.dl.forEach(function(p){
+    if(!p.d||(p.k||"Exam")!=="Exam")return;
+    var t=new Date(p.d+"T"+(p.m||"09:00")+":00").getTime();
+    if(isNaN(t)||t+3*36e5<now)return;
+    if(!best||t<best.t)best={t:t,p:p};
+  });
+  return best;
+}
+function cdTick(){
+  var el=document.getElementById("cdw");if(!el)return;
+  var b=nextExam();if(!b){el.hidden=true;return}
+  var ms=b.t-Date.now();el.hidden=false;el.classList.toggle("urgent",ms<864e5);
+  document.getElementById("cdT").textContent=b.p.t||"Exam";
+  document.getElementById("cdD").textContent=b.p.d+(b.p.m?" at "+b.p.m:" (time not set, counting to 09:00)");
+  function z(n){return("0"+n).slice(-2)}
+  document.getElementById("cdN").innerHTML=ms<=0?'<div style="padding:10px 16px"><strong style="font-size:20px">Exam time</strong></div>':[["days",Math.floor(ms/864e5)],["hours",Math.floor(ms%864e5/36e5)],["min",Math.floor(ms%36e5/6e4)],["sec",Math.floor(ms%6e4/1e3)]].map(function(x){return'<div><strong>'+z(x[1])+'</strong><span>'+x[0]+'</span></div>'}).join("");
+}
+/* study timer and streak */
+var TM={run:false,end:0,left:1500,iv:null};
+function tmFmt(s){return("0"+Math.floor(s/60)).slice(-2)+":"+("0"+s%60).slice(-2)}
+function tmMin(){return +document.getElementById("tmm").value||25}
+function tmUI(){document.getElementById("tmt").textContent=tmFmt(TM.left);document.getElementById("tmGo").textContent=TM.run?"Pause":"Start"}
+function tmStats(){
+  var d=S.st.d,td=d[dkey()]||{s:0,m:0},streak=0,c=new Date(),ts=0,mx=1,rows=[],i,dt;
+  if(!(d[dkey(c)]&&d[dkey(c)].s))c.setDate(c.getDate()-1);
+  while(d[dkey(c)]&&d[dkey(c)].s){streak++;c.setDate(c.getDate()-1)}
+  Object.keys(d).forEach(function(x){ts+=d[x].s});
+  for(i=6;i>=0;i--){dt=new Date();dt.setDate(dt.getDate()-i);var e=d[dkey(dt)]||{m:0};rows.push([dkey(dt).slice(5),e.m]);if(e.m>mx)mx=e.m}
+  document.getElementById("tms").innerHTML='<div class="mini"><div><b>'+td.m+'</b>minutes today</div><div><b>'+streak+'</b>day streak</div><div><b>'+ts+'</b>sessions total</div></div>'+rows.map(function(r){return'<div class="db2"><span>'+r[0]+'</span><i style="width:'+(r[1]/mx*100)+'%"></i><span>'+r[1]+' min</span></div>'}).join("");
+}
+function tmTick(){var l=Math.round((TM.end-Date.now())/1000);if(l<=0){tmDone();return}TM.left=l;tmUI();document.title=tmFmt(l)+" | Focus"}
+function tmDone(){
+  clearInterval(TM.iv);TM.run=false;var m=tmMin(),k=dkey(),d=S.st.d[k]||(S.st.d[k]={s:0,m:0});d.s++;d.m+=m;save();
+  TM.left=m*60;tmUI();tmStats();document.title=BASE_TITLE;document.getElementById("tmn").textContent="Session complete! Take a 5 minute break.";
+  try{if(navigator.vibrate)navigator.vibrate([200,100,200]);var a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator();o.connect(a.destination);o.frequency.value=880;o.start();setTimeout(function(){o.stop()},400)}catch(e){}
+}
+function tmGo(){
+  if(TM.run){clearInterval(TM.iv);TM.left=Math.max(1,Math.ceil((TM.end-Date.now())/1000));TM.run=false;document.title=BASE_TITLE}
+  else{TM.end=Date.now()+TM.left*1000;TM.run=true;TM.iv=setInterval(tmTick,500);document.getElementById("tmn").textContent=""}
+  tmUI();
+}
+function tmReset(){clearInterval(TM.iv);TM.run=false;TM.left=tmMin()*60;document.title=BASE_TITLE;document.getElementById("tmn").textContent="";tmUI()}
+
+function toolsRender(){
+  atList();atCalc();dlList();dlCalc();tmUI();tmStats();clsRender();tdRender();fcRender();ntList();npList();ntUI();cdTick();collabRender();
+  document.getElementById("fb").innerHTML=FEEDBACK_URL?'<a class="btn sm" href="'+esc(FEEDBACK_URL)+'" target="_blank" rel="noopener">Send feedback</a>':cBtn("Feedback on WhatsApp","Feedback about the CGPA site: ","")+cBtn("Feedback on Messenger","Feedback about the CGPA site: ","l",1);
+}
+
+/* CSV export and share card */
+function csvDownload(){
+  var rows=[["Semester","Course","Credit","Marks","Grade","Grade point"]];
+  S.sem.forEach(function(s){s.c.forEach(function(c){var g=actGP(c),m=parseFloat(c.m);rows.push([s.name,c.n,c.cr,c.m,g===null?"":GR[gi(m)][0],g===null?"":g])})});
+  var t=tot();rows.push([],["CGPA","",t.cr,"","",f2(t.cg)]);
+  dlFile("cgpa-results.csv","\ufeff"+rows.map(function(r){return r.map(function(x){x=String(x===undefined?"":x);return/[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x}).join(",")}).join("\r\n"),"text/csv");
+}
+function shareCard(){
+  if(!tot().cr){alert("Add your marks first.");return}
+  var go=function(){
+    var c=document.createElement("canvas");c.width=1080;c.height=1350;var x=c.getContext("2d"),F="Sora, Inter, system-ui, sans-serif",T=tot();
+    var g=x.createLinearGradient(0,0,1080,1350);g.addColorStop(0,"#3a2bd9");g.addColorStop(.6,"#5b4bff");g.addColorStop(1,"#00c2a8");x.fillStyle=g;x.fillRect(0,0,1080,1350);
+    x.fillStyle="rgba(255,255,255,.12)";x.beginPath();x.arc(940,170,250,0,7);x.fill();x.beginPath();x.arc(100,1230,190,0,7);x.fill();
+    x.fillStyle="#fff";x.font="700 46px "+F;x.fillText("My CGPA",80,150);
+    x.font="800 240px "+F;x.fillText(f2(T.cg),72,420);
+    x.font="500 40px "+F;x.fillText("out of 4.00   |   "+T.cr+" credits",80,490);
+    var ws=S.sem.filter(function(s){return semStat(s).cr>0}).slice(-8),n=ws.length;
+    if(n){var bw=Math.min(90,860/n*.7),gap=860/n,base=1130;
+      x.font="600 30px "+F;x.fillText("GPA by semester",80,590);
+      ws.forEach(function(s,i){var gp=semStat(s).gpa,h=gp/4*420,cx=110+gap*(i+.5);
+        x.fillStyle="rgba(255,255,255,.9)";x.fillRect(cx-bw/2,base-h,bw,h);
+        x.fillStyle="#fff";x.font="700 30px "+F;x.textAlign="center";x.fillText(f2(gp),cx,base-h-14);x.font="500 26px "+F;x.fillText("S"+(S.sem.indexOf(s)+1),cx,base+44);x.textAlign="left"})}
+    x.fillStyle="rgba(255,255,255,.85)";x.font="600 34px "+F;x.fillText("CGPA Tracker",80,1290);
+    c.toBlob(function(b){var f=new File([b],"my-cgpa.png",{type:"image/png"});
+      if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:"My CGPA"}).catch(function(){});
+      else dlFile("my-cgpa.png",b,"image/png")},"image/png");
+  };
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(go);
+}
+
+/* FAQ with search-engine markup */
+var FAQ=[
+ ["How do I calculate CGPA?","CGPA is the sum of (credit times grade point) for all courses, divided by the total credits. Example: 3 credits at 4.00 and 3 credits at 3.50 give (12 + 10.5) / 6 = 3.75."],
+ ["How do I calculate CGPA from marks?","First convert each course's marks to a grade point using your university's scale, for example 80 and above is A+ with 4.00. Then use the CGPA formula. This site does the conversion for you."],
+ ["What is the difference between attempted and earned CGPA?","Attempted CGPA counts every course you took, including failed ones. Earned CGPA counts only the courses you passed. Many university portals show both."],
+ ["How do retakes change my CGPA?","It depends on your university. Some replace the old grade, some keep the best grade, and some cap the retake grade. Choose your rule in Settings."],
+ ["How can I improve my CGPA?","Focus on high-credit courses, retake failed courses, solve past questions early, and use the what-if simulator to see which courses give the biggest gain."],
+ ["Is my data safe?","Your results stay in your own browser. Nothing is uploaded unless you turn on cloud sync."]
+];
+function faqInit(){
+  document.getElementById("faq").innerHTML=FAQ.map(function(q){return"<details><summary>"+esc(q[0])+"</summary><p>"+esc(q[1])+"</p></details>"}).join("");
+  var sc=document.createElement("script");sc.type="application/ld+json";
+  sc.textContent=JSON.stringify([{"@context":"https://schema.org","@type":"FAQPage","mainEntity":FAQ.map(function(q){return{"@type":"Question","name":q[0],"acceptedAnswer":{"@type":"Answer","text":q[1]}}})},{"@context":"https://schema.org","@type":"WebApplication","name":"CGPA Tracker","applicationCategory":"EducationalApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"BDT"}}]);
+  document.head.appendChild(sc);
+}
+function extrasInit(){
+  faqInit();
+  if(CF_TOKEN){var s=document.createElement("script");s.defer=true;s.src="https://static.cloudflareinsights.com/beacon.min.js";s.setAttribute("data-cf-beacon",JSON.stringify({token:CF_TOKEN}));document.head.appendChild(s)}
+  try{if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}
+}
+/* Bangla (বাংলা) text. Keys are the exact English texts. Some messages created by calculations stay in English. */
+var BN={
+"CGPA Tracker":"সিজিপিএ ট্র্যাকার","Know your CGPA. Plan your next result.":"আপনার সিজিপিএ জানুন। পরের ফলাফল পরিকল্পনা করুন।",
+"Add marks and credits for each semester. See your GPA, your CGPA, and the marks you need to reach your target.":"প্রতিটি সেমিস্টারের নম্বর ও ক্রেডিট যোগ করুন। আপনার জিপিএ, সিজিপিএ এবং লক্ষ্যে পৌঁছাতে প্রয়োজনীয় নম্বর দেখুন।",
+"Credits done":"সম্পন্ন ক্রেডিট","Semesters":"সেমিস্টার","Last GPA":"শেষ জিপিএ","CGPA without F":"F ছাড়া সিজিপিএ",
+"Import your results":"ফলাফল ইমপোর্ট করুন","Your semesters":"আপনার সেমিস্টারসমূহ","Target planner":"লক্ষ্য পরিকল্পনা","Exam marks calculator":"পরীক্ষার নম্বর ক্যালকুলেটর",
+"Attendance tracker":"উপস্থিতি ট্র্যাকার","Exams & deadlines":"পরীক্ষা ও ডেডলাইন","Study timer":"স্টাডি টাইমার","Insights":"বিশ্লেষণ","What-if simulator":"যদি-তাহলে সিমুলেটর",
+"How CGPA works":"সিজিপিএ কীভাবে হিসাব হয়","Smart study tips":"পড়াশোনার কার্যকর টিপস","Resource Hub":"রিসোর্স হাব","Free resources":"ফ্রি রিসোর্স","Settings & backup":"সেটিংস ও ব্যাকআপ",
+"Common questions":"সাধারণ প্রশ্ন","Calculator":"ক্যালকুলেটর","Weekly routine":"সাপ্তাহিক রুটিন","Reminders":"রিমাইন্ডার","Share":"শেয়ার","Share with friends":"বন্ধুদের সাথে শেয়ার করুন","Import exam routine":"পরীক্ষার রুটিন ইমপোর্ট","Grading scale":"গ্রেডিং স্কেল","Quick GPA":"দ্রুত জিপিএ","CGPA predictor":"সিজিপিএ পূর্বাভাস","Degree progress":"ডিগ্রি অগ্রগতি","Study priority":"পড়ার অগ্রাধিকার","Course view":"কোর্স ভিউ","Take the tour again":"ট্যুর আবার দেখুন","Exams":"পরীক্ষা","Exam routine":"পরীক্ষার রুটিন","Print exam routine":"পরীক্ষার রুটিন প্রিন্ট","Copy as text":"টেক্সট কপি","Collaborate":"সহযোগিতা","Share your idea anonymously":"নাম গোপন রেখে আইডিয়া শেয়ার করুন","Turn on reminders":"রিমাইন্ডার চালু করুন","Before each class":"প্রতিটি ক্লাসের আগে","Evening reminder at":"সন্ধ্যার রিমাইন্ডার","Exam day morning at":"পরীক্ষার দিন সকালে","Next exam":"পরবর্তী পরীক্ষা","To-do list":"করণীয় তালিকা","Flashcards":"ফ্ল্যাশকার্ড","Notes & formulas":"নোট ও সূত্র","Next semester planner":"পরের সেমিস্টার পরিকল্পনা","Add class":"ক্লাস যোগ করুন","Add task":"টাস্ক যোগ করুন","Add card":"কার্ড যোগ করুন","+ Add note":"+ নোট যোগ করুন","Target":"লক্ষ্য","Plan":"পরিকল্পনা","Study":"পড়াশোনা","Hub":"হাব","More":"আরও","Feedback":"মতামত","Privacy policy":"গোপনীয়তা নীতি","Terms of use":"ব্যবহারের শর্তাবলি",
+"+ Add semester":"+ সেমিস্টার যোগ করুন","+ Add course":"+ কোর্স যোগ করুন","+ Add part":"+ অংশ যোগ করুন","+ Add event":"+ ইভেন্ট যোগ করুন",
+"Read my results":"আমার ফলাফল পড়ুন","Try a sample":"নমুনা দেখুন","Add to my data":"আমার ডেটায় যোগ করুন","Replace my data":"আমার ডেটা প্রতিস্থাপন করুন",
+"Print / PDF":"প্রিন্ট / পিডিএফ","Dark / Light":"ডার্ক / লাইট","Download backup":"ব্যাকআপ ডাউনলোড","Restore backup":"ব্যাকআপ পুনরুদ্ধার","Delete all data":"সব ডেটা মুছুন",
+"Download CSV":"CSV ডাউনলোড","Share my result card":"রেজাল্ট কার্ড শেয়ার করুন","Download all (.ics)":"সব ডাউনলোড (.ics)",
+"Apply these grades to my data":"এই গ্রেডগুলো আমার ডেটায় প্রয়োগ করুন","Reset what-if":"রিসেট করুন","Start":"শুরু","Reset":"রিসেট",
+"Target CGPA":"লক্ষ্য সিজিপিএ","Total credits in degree":"ডিগ্রির মোট ক্রেডিট","Semesters left":"বাকি সেমিস্টার","Credits next semester":"পরের সেমিস্টারের ক্রেডিট",
+"What if my next semester GPA is...":"পরের সেমিস্টারে জিপিএ যদি হয়...","Next GPA":"পরের জিপিএ","Marks needed":"প্রয়োজনীয় নম্বর","New CGPA":"নতুন সিজিপিএ",
+"Part":"অংশ","Full marks":"পূর্ণ নম্বর","Obtained":"প্রাপ্ত","Course":"কোর্স","Credit":"ক্রেডিট","Marks":"নম্বর","Grade":"গ্রেড","Held":"অনুষ্ঠিত","Attended":"উপস্থিত",
+"Title":"শিরোনাম","Date":"তারিখ","Study hrs":"পড়ার ঘণ্টা","Required attendance (%)":"প্রয়োজনীয় উপস্থিতি (%)","Show all courses":"সব কোর্স দেখান","Give all of them:":"সবগুলোর জন্য দিন:",
+"Semester GPA goal":"সেমিস্টার জিপিএ লক্ষ্য","Semester GPA and CGPA":"সেমিস্টার জিপিএ ও সিজিপিএ","Grade distribution":"গ্রেডের বিন্যাস","Best courses to improve":"উন্নতির সেরা কোর্স",
+"The formula":"সূত্র","Marks to grade scale":"নম্বর থেকে গ্রেড স্কেল","Retake rule":"রিটেকের নিয়ম","Earn by sharing your notes":"নোট শেয়ার করে আয় করুন",
+"Recommended for you":"আপনার জন্য প্রস্তাবিত","All resources":"সব রিসোর্স","Allowed":"অনুমোদিত","Not allowed":"অনুমোদিত নয়",
+"Failed (F) courses are treated as retakes: the F is replaced and its credits are still needed.":"ফেল (F) করা কোর্স রিটেক ধরা হয়: F বাদ যায় এবং ওই ক্রেডিট আবার প্রয়োজন।",
+"Results are estimates. Check your official transcript for final numbers.":"ফলাফল আনুমানিক। চূড়ান্ত সংখ্যার জন্য আপনার অফিসিয়াল ট্রান্সক্রিপ্ট দেখুন।",
+"Search course code or subject":"কোর্স কোড বা বিষয় খুঁজুন","Course name":"কোর্সের নাম","Top rated":"সেরা রেটিং","Lowest price":"সর্বনিম্ন দাম"
+};
+function applyLang(){
+  var bn=S.lang==="bn",w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null),ns=[],n;
+  while((n=w.nextNode()))ns.push(n);
+  ns.forEach(function(n){
+    var p=n.parentNode&&n.parentNode.nodeName;if(p==="SCRIPT"||p==="STYLE"||p==="TEXTAREA")return;
+    var raw=n.nodeValue,t=raw.trim();if(!t)return;
+    if(bn){if(BN[t]){n.__en=raw;n.nodeValue=raw.replace(t,BN[t])}}
+    else if(n.__en!==undefined){n.nodeValue=n.__en;n.__en=undefined}
+  });
+  document.querySelectorAll("[placeholder]").forEach(function(e){
+    var k=e.getAttribute("data-en")||e.getAttribute("placeholder");
+    if(bn&&BN[k]){e.setAttribute("data-en",k);e.setAttribute("placeholder",BN[k])}
+    else if(!bn&&e.getAttribute("data-en"))e.setAttribute("placeholder",e.getAttribute("data-en"));
+  });
+  document.documentElement.lang=bn?"bn":"en";
+  document.getElementById("lg").textContent=bn?"English":"বাংলা";
+}
+var TABMAP={"Import your results":"calc","Your semesters":"calc","Target planner":"plan","What-if simulator":"plan","Exam marks calculator":"plan","Insights":"insights","How CGPA works":"insights","Attendance tracker":"study","Exams & deadlines":"exams","Exam routine":"exams","Study timer":"study","Smart study tips":"study","Reminders":"study","Import exam routine":"exams","Share with friends":"more","Quick GPA":"calc","CGPA predictor":"plan","Degree progress":"insights","Study priority":"study","Course view":"study","Weekly routine":"study","To-do list":"study","Flashcards":"study","Notes & formulas":"study","Next semester planner":"plan","Resource Hub":"hub","Collaborate":"collab","Free resources":"hub","Settings & backup":"more","Common questions":"more","Feedback":"more","Privacy policy":"more","Terms of use":"more"};
+function tabsInit(){
+  var cur=null;
+  document.querySelectorAll("main.wrap > *, body > .wrap.noprint > *").forEach(function(el){
+    if(el.id==="tabs"||el.classList.contains("stats"))return;
+    if(el.tagName==="H2"){var t=el.textContent.replace(/Beta$/,"").trim();cur=TABMAP[t]||cur}
+    if(cur)el.setAttribute("data-pane",cur);
+  });
+}
+function tabShow(t,sc){
+  S.tab=t;
+  document.querySelectorAll("[data-pane]").forEach(function(e){e.hidden=e.getAttribute("data-pane")!==t});
+  document.querySelectorAll("#tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.tab===t?"true":"false")});
+  if(sc!==false){var n=document.getElementById("tabs");window.scrollTo({top:n.getBoundingClientRect().top+window.pageYOffset-(parseFloat(getComputedStyle(document.documentElement).paddingTop)||0),behavior:"smooth"})}
+}
+/* weekly routine */
+var DAYS={6:"Sat",0:"Sun",1:"Mon",2:"Tue",3:"Wed",4:"Thu",5:"Fri"},DORD=[6,0,1,2,3,4,5];
+function clsNext(){
+  var el=document.getElementById("clN");if(!el)return;
+  var now=new Date(),best=null;
+  S.cls.forEach(function(c){
+    var p=c.s.split(":"),dd=(c.d-now.getDay()+7)%7,t=new Date(now.getFullYear(),now.getMonth(),now.getDate()+dd,+p[0],+p[1]);
+    if(t<now)t=new Date(t.getTime()+7*864e5);
+    if(!best||t<best.t)best={t:t,c:c};
+  });
+  if(!best){el.textContent="Add your classes to see your next class.";return}
+  var m=Math.round((best.t-now)/6e4),h=Math.floor(m/60),when=m<60?m+" min":h<24?h+"h "+(m%60)+"m":Math.floor(h/24)+" days";
+  el.innerHTML="Next class: <b>"+esc(best.c.t)+"</b>, "+DAYS[best.c.d]+" "+esc(best.c.s)+" (in "+when+")";
+}
+function clsRender(){
+  var h="";
+  DORD.forEach(function(d){
+    var items=[];S.cls.forEach(function(c,i){if(c.d===d)items.push([i,c])});
+    if(!items.length)return;
+    items.sort(function(a,b){return a[1].s<b[1].s?-1:1});
+    h+='<div class="imp"><b style="color:var(--ink);min-width:44px">'+DAYS[d]+'</b><span style="flex:1;display:flex;flex-wrap:wrap;gap:6px">'+items.map(function(x){return'<span class="chip">'+esc(x[1].s)+'-'+esc(x[1].e)+' '+esc(x[1].t)+' <button class="x" style="font-size:14px;padding:0 2px" data-cld="'+x[0]+'" aria-label="Remove class">&times;</button></span>'}).join("")+'</span></div>';
+  });
+  document.getElementById("cll").innerHTML=h||'<p class="note">No classes yet.</p>';
+  clsNext();
+}
+/* to-do list */
+function tdRender(){
+  var today=dkey(),done=0,over=0,idx=S.todo.map(function(x,i){return i});
+  idx.sort(function(a,b){var x=S.todo[a],y=S.todo[b];if(!!x.x!==!!y.x)return x.x?1:-1;return(x.d||"9999")<(y.d||"9999")?-1:1});
+  var h=idx.map(function(i){var x=S.todo[i],late=!x.x&&x.d&&x.d<today;
+    if(x.x)done++;else if(late)over++;
+    return'<div class="imp"><label style="display:flex;gap:8px;align-items:center;flex:1;cursor:pointer"><input type="checkbox" data-tdc="'+i+'"'+(x.x?" checked":"")+' style="width:auto"><span style="'+(x.x?"text-decoration:line-through;color:var(--mute)":"")+'">'+esc(x.t)+'</span></label><span class="note" style="'+(late?"color:var(--bad);font-weight:700":"")+'">'+esc(x.d||"")+'</span><button class="x" data-tdd="'+i+'" aria-label="Delete task">&times;</button></div>'}).join("");
+  var n=S.todo.length;
+  document.getElementById("tdS").innerHTML=n?'<div class="bar" style="margin:0 0 6px"><i style="width:'+(done/n*100)+'%"></i></div><p class="note" style="margin:0 0 8px">'+done+' of '+n+' done'+(over?' &middot; <b style="color:var(--bad)">'+over+' overdue</b>':'')+'</p>':'';
+  document.getElementById("tdl").innerHTML=h||'<p class="note">No tasks yet. Add an assignment, quiz, or lab report.</p>';
+}
+/* flashcards (cards you miss come back sooner) */
+var FCS={show:false};
+function fcPick(){var b=-1,s=1e30;S.fc.forEach(function(c,i){var v=(c.b||1)*1e14+(c.t||0);if(v<s){s=v;b=i}});return b}
+function fcAnswer(ok){var i=fcPick();if(i<0)return;var c=S.fc[i];c.b=ok?Math.min((c.b||1)+1,4):1;c.t=Date.now();FCS.show=false;save();fcRender()}
+function fcRender(){
+  var el=document.getElementById("fcv"),n=S.fc.length;
+  if(!n){el.innerHTML='<p class="note">No cards yet. Add a question and its answer above.</p>';return}
+  var i=fcPick(),c=S.fc[i],cnt=[0,0,0,0];S.fc.forEach(function(x){cnt[Math.min(Math.max(x.b||1,1),4)-1]++});
+  el.innerHTML='<p class="note" style="margin:0 0 8px">'+n+' cards &middot; New or again: '+cnt[0]+' &middot; Learning: '+(cnt[1]+cnt[2])+' &middot; Known: '+cnt[3]+'</p><div class="res" style="text-align:center"><h3>'+esc(c.q)+'</h3>'+(FCS.show?'<p style="font-size:18px"><b>'+esc(c.a)+'</b></p><div class="acts" style="justify-content:center"><button class="btn sm" data-fck="1">I knew it</button><button class="btn l sm" data-fck="0">Not yet</button></div>':'<div class="acts" style="justify-content:center"><button class="btn sm" data-fcs="1">Show answer</button></div>')+'<button class="x" style="font-size:13px;margin-top:6px" data-fcd="'+i+'">Delete this card</button></div>';
+}
+/* notes */
+function ntList(){
+  document.getElementById("ntl").innerHTML=S.notes.map(function(p,i){return'<div style="margin-bottom:14px"><div class="row3" style="grid-template-columns:1fr 28px"><input data-nti="'+i+'" data-ntf="c" value="'+esc(p.c)+'" placeholder="Course or topic, e.g. Calculus formulas" aria-label="Note title"><button class="x" data-ntd="'+i+'" aria-label="Delete note">&times;</button></div><textarea data-nti="'+i+'" data-ntf="t" placeholder="Write formulas and notes here..." aria-label="Note text">'+esc(p.t)+'</textarea></div>'}).join("");
+}
+/* next semester planner */
+function npList(){
+  document.getElementById("npl").innerHTML=S.np.map(function(p,i){return'<div class="row3" style="grid-template-columns:1fr 70px 90px 28px"><input data-npi="'+i+'" data-npf="n" value="'+esc(p.n)+'" placeholder="Course name" aria-label="Course name"><input type="number" min="0" step="0.5" inputmode="decimal" data-npi="'+i+'" data-npf="cr" value="'+esc(p.cr)+'" placeholder="3" aria-label="Credit"><select data-npi="'+i+'" data-npf="g" aria-label="Target grade">'+GR.map(function(g,q){return'<option value="'+q+'"'+(String(p.g)===String(q)?" selected":"")+'>'+g[0]+'</option>'}).join("")+'</select><button class="x" data-npd="'+i+'" aria-label="Remove course">&times;</button></div>'}).join("");
+}
+function npCalc(){
+  var C=0,P=0,el=document.getElementById("npr"),T=tot();
+  S.np.forEach(function(p){var k=parseFloat(p.cr),g=GR[+p.g];if(k>0&&g){C+=k;P+=k*g[1]}});
+  if(!C){el.className="res";el.innerHTML="<p>Add next semester's courses, credits and the grades you aim for.</p>";return}
+  var sg=P/C,pc=(T.pt+P)/(T.cr+C),d=pc-T.cg,tg=parseFloat(S.tg),h="<h3>Semester GPA "+f2(sg)+". CGPA "+f2(T.cg)+" &rarr; "+f2(pc)+" ("+(d>=0?"+":"")+f2(d)+")</h3><p>"+C+" credits planned.</p>";
+  if(tg>0&&T.cr>0){var need=(tg*(T.cr+C)-T.pt)/C;h+=need>4+1e-9?"<p>Reaching your target of "+f2(tg)+" in one semester is not possible with "+C+" credits.</p>":need<=0?"<p>Your target of "+f2(tg)+" is already safe with this plan.</p>":"<p>To reach your target CGPA of "+f2(tg)+" in this semester you need a GPA of <b>"+f2(need)+"</b>.</p>"}
+  el.className="res"+(d>0.004?" ok":d<-0.004?" no":"");el.innerHTML=h;
+}
+/* ===== COLLABORATE (site owner edits IDEAS). Samples are marked sample:true. ===== */
+var IDEAS=[
+ {id:"I1",area:"Machine Learning",title:"Predicting student dropout risk from attendance and marks",desc:"A simple model that flags at-risk students early using attendance and exam trends.",need:"Someone to help with data cleaning and model evaluation",level:"Undergraduate",alias:"Researcher-A4",sample:true},
+ {id:"I2",area:"Wireless Networks",title:"Energy-saving routing for low-power sensor networks",desc:"Compare two routing ideas in simulation and measure battery life.",need:"A partner experienced with network simulators",level:"Undergraduate",alias:"Researcher-K9",sample:true},
+ {id:"I3",area:"Embedded Systems",title:"Low-cost smart classroom attendance device",desc:"A small device that records attendance and sends it to a simple dashboard.",need:"Someone for hardware design or mobile app work",level:"Undergraduate",alias:"Researcher-T2",sample:true},
+ {id:"I4",area:"Renewable Energy",title:"Solar panel cleaning schedule using weather data",desc:"Find the best cleaning times to keep output high with the least water.",need:"A partner for data analysis and writing",level:"Masters",alias:"Researcher-M7",sample:true}
+];
+function openMsg(msg,ms){
+  if(!hubOK()){alert("Requests are not open yet. The site owner needs to add contact details.");return}
+  window.open((ms?"https://m.me/"+CONTACT_MS+"?text=":"https://wa.me/"+CONTACT_WA+"?text=")+encodeURIComponent(msg),"_blank","noopener");
+}
+function cfCard(x){
+  var msg="Hi! I am interested in collaborating on idea "+x.id+" ("+x.title+"). Please connect me with the poster.";
+  return'<div class="rc"><div><span class="chip">'+esc(x.area)+'</span> <span class="chip g">'+esc(x.level)+'</span>'+(x.sample?' <span class="chip s">Sample</span>':'')+'</div><h4>'+esc(x.title)+'</h4><p class="note" style="margin:0">'+esc(x.desc)+'</p><p class="note" style="margin:0"><b>Looking for:</b> '+esc(x.need)+'</p><p class="note" style="margin:0">Posted by '+esc(x.alias)+'</p><div class="rf">'+(x.sample?'<button class="btn sm" disabled>Coming soon</button>':cBtn("Connect on WhatsApp",msg,"")+cBtn("Messenger",msg,"l",1))+'</div></div>';
+}
+function collabRender(){
+  var q=document.getElementById("cfQ").value.toLowerCase(),a=document.getElementById("cfA"),cur=a.value,areas=[];
+  IDEAS.forEach(function(x){if(areas.indexOf(x.area)<0)areas.push(x.area)});
+  a.innerHTML='<option value="">All areas</option>'+areas.map(function(r){return'<option'+(r===cur?" selected":"")+'>'+esc(r)+'</option>'}).join("");
+  var list=IDEAS.filter(function(x){return(!a.value||x.area===a.value)&&(!q||(x.area+" "+x.title+" "+x.desc+" "+x.need).toLowerCase().indexOf(q)>=0)});
+  document.getElementById("cfL").innerHTML=list.length?'<div class="rgrid">'+list.map(cfCard).join("")+'</div>'+(IDEAS.every(function(x){return x.sample})?'<p class="note">These are sample ideas to show how it will look. Real ideas are coming soon. Be the first to share yours below.</p>':""):'<p class="note">No ideas found. Try another area, or share yours below.</p>';
+  document.getElementById("cfAl").textContent=S.alias;
+  document.getElementById("cfAreas").innerHTML=areas.map(function(r){return'<option value="'+esc(r)+'">'}).join("");
+}
+function cfPost(ms){
+  var g=function(i){return document.getElementById(i).value.trim()},area=g("cpA"),title=g("cpT"),idea=g("cpD");
+  if(!area||!title||!idea){toast("Please fill the research area, title and idea.");return}
+  openMsg("New collaboration idea (please review and list it anonymously)\nAlias: "+S.alias+"\nArea: "+area+"\nTitle: "+title+"\nIdea: "+idea+"\nLooking for: "+(g("cpN")||"-")+"\nMy level: "+document.getElementById("cpL").value+"\nI agree to be contacted only through the admin.",ms);
+}
+/* exam routine table */
+var MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],DN=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function erList(){
+  return S.dl.filter(function(p){return p.d&&(p.k||"Exam")==="Exam"&&!isNaN(new Date(p.d+"T00:00:00"))}).sort(function(a,b){return a.d<b.d?-1:a.d>b.d?1:(a.m||"")<(b.m||"")?-1:1});
+}
+function erRender(){
+  var today=new Date();today.setHours(0,0,0,0);var ex=erList(),el=document.getElementById("erT");
+  if(!ex.length){el.innerHTML='<p class="note">Add your exams in the Exams &amp; deadlines card above. Your routine will appear here.</p>';return}
+  el.innerHTML='<div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Day</th><th>Time</th><th>Subject</th><th>Days left</th></tr></thead><tbody>'+ex.map(function(p){
+    var d=new Date(p.d+"T00:00:00"),n=Math.round((d-today)/864e5);
+    return'<tr'+(n<0?' style="opacity:.5"':'')+'><td>'+d.getDate()+' '+MN[d.getMonth()]+' '+d.getFullYear()+'</td><td>'+DN[d.getDay()]+'</td><td>'+esc(p.m||"-")+'</td><td><b>'+esc(p.t||"Untitled")+'</b></td><td>'+(n<0?"Done":n===0?"Today":n+" day"+(n===1?"":"s"))+'</td></tr>'}).join("")+'</tbody></table></div>';
+}
+function erCopy(){
+  var ex=erList();if(!ex.length){toast("Add your exams first.");return}
+  var t="Exam routine\n"+ex.map(function(p){var d=new Date(p.d+"T00:00:00");return DN[d.getDay()].slice(0,3)+" "+d.getDate()+" "+MN[d.getMonth()]+" "+d.getFullYear()+(p.m?", "+p.m:"")+" - "+(p.t||"Untitled")}).join("\n");
+  try{navigator.clipboard.writeText(t).then(function(){toast("Exam routine copied.")},function(){toast(t)})}catch(e){toast(t)}
+}
+/* ===== smart extras: quick GPA, predictor, degree progress, study priority, course view, tour, backup reminder ===== */
+var QG=[];
+function qgInit(){QG=[];for(var i=0;i<6;i++)QG.push({c:"",g:""});qgList();qgCalc()}
+function qgList(){
+  document.getElementById("qgl").innerHTML=QG.map(function(r,i){return'<div class="row3" style="grid-template-columns:1fr 100px 28px"><input type="number" min="0" step="0.5" inputmode="decimal" data-qi="'+i+'" data-qf="c" value="'+esc(r.c)+'" placeholder="Credit" aria-label="Credit"><select data-qi="'+i+'" data-qf="g" aria-label="Grade"><option value="">Grade</option>'+GR.map(function(g,q){return'<option value="'+q+'"'+(String(r.g)===String(q)?" selected":"")+'>'+g[0]+'</option>'}).join("")+'</select><button class="x" data-qd="'+i+'" aria-label="Remove row">&times;</button></div>'}).join("");
+}
+function qgCalc(){
+  var C=0,P=0,el=document.getElementById("qgr");
+  QG.forEach(function(r){var k=parseFloat(r.c);if(k>0&&r.g!==""){C+=k;P+=k*GR[+r.g][1]}});
+  if(!C){el.className="res";el.innerHTML="<p>Add credits and grades to see your GPA.</p>";return}
+  var h="<h3>GPA "+f2(P/C)+"</h3><p>"+C+" credits</p>",cg=parseFloat(document.getElementById("qgC").value),ck=parseFloat(document.getElementById("qgK").value);
+  if(cg>=0&&ck>0)h+="<p>New CGPA with your current "+f2(cg)+" over "+ck+" credits: <b>"+f2((cg*ck+P)/(ck+C))+"</b></p>";
+  el.className="res";el.innerHTML=h;
+}
+function predRender(){
+  var el=document.getElementById("prd"),E=earned(),tc=parseFloat(S.tc)||0,rem=tc-E.cr,g=[];
+  S.sem.forEach(function(s){var t=semStat(s);if(t.cr>0)g.push(t.gpa)});
+  if(!g.length||!(tc>0)){el.innerHTML='<p class="note">Add your marks and total degree credits to see a prediction.</p>';return}
+  if(rem<=0){el.innerHTML='<p class="note">All degree credits are complete. Final CGPA: <b>'+f2(E.cg)+'</b>.</p>';return}
+  var last=g.slice(-3),likely=last.reduce(function(a,b){return a+b},0)/last.length,best=Math.max.apply(null,g),worst=Math.min.apply(null,g),tg=parseFloat(S.tg)||0;
+  function box(lab,gp,cls){var f=(E.pt+gp*rem)/tc;return'<div class="pbx '+cls+'"><span>'+lab+'</span><b>'+f2(f)+'</b><small>if you average '+f2(gp)+' GPA</small>'+(tg>0?'<small>'+(f>=tg-1e-9?"Meets your target":"Below target "+f2(tg))+'</small>':'')+'</div>'}
+  el.innerHTML='<div class="pgrid">'+box("Best case",best,"g")+box("Likely",likely,"")+box("Worst case",worst,"b")+'</div><p class="note">Final CGPA if you repeat your best, recent-average, or lowest semester GPA over the remaining '+rem+' credits.'+(g.length<3?" Add more semesters for a better prediction.":"")+'</p>';
+}
+function dpRender(){
+  var el=document.getElementById("dpg"),E=earned(),tc=parseFloat(S.tc)||0;
+  if(!(tc>0)){el.innerHTML='<p class="note">Set your total degree credits in the Plan tab to see your progress.</p>';return}
+  var pct=Math.min(100,E.cr/tc*100),sems=0,cr=0,rem=Math.max(tc-E.cr,0);
+  S.sem.forEach(function(s){var t=semStat(s);if(t.cr>0){sems++;cr+=t.cr}});
+  var avg=sems?cr/sems:0,left=avg>0?Math.ceil(rem/avg):null;
+  el.innerHTML='<div class="bar" style="height:18px;margin:6px 0"><i style="width:'+pct+'%"></i></div><div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mute)"><span>0</span><span>'+Math.round(tc/2)+'</span><span>'+tc+' credits</span></div><div class="mini" style="margin-top:14px"><div><b>'+E.cr+'</b>credits earned</div><div><b>'+Math.round(pct)+'%</b>complete</div><div><b>'+rem+'</b>credits left</div></div><div class="acts" style="margin:0">'+[25,50,75,100].map(function(m){return'<span class="chip'+(pct>=m?" g":"")+'">'+m+'%</span>'}).join("")+'</div>'+(left!==null&&rem>0?'<p class="note">At your average of '+avg.toFixed(1)+' credits per semester, about <b>'+left+' more semester'+(left===1?"":"s")+'</b> to finish.</p>':'');
+}
+var CVSTOP=["final","midterm","exam","quiz","test","assignment","report","class","engineering","introduction","fundamentals","advanced","sessional","laboratory","project","presentation","deadline","submission","computer","basic","semester"];
+function cvM(cn,txt){
+  var c=String(cn).toLowerCase(),t=String(txt||"").toLowerCase();if(!c||!t)return false;
+  var m=c.match(/[a-z]{2,6}[- ]?\d{3,4}/),code=m?m[0].replace(/[- ]/g,""):"",name=c.replace(m?m[0]:"","").replace(/\s+/g," ").trim();
+  if((code&&t.replace(/[- ]/g,"").indexOf(code)>=0)||(name.length>=4&&t.indexOf(name)>=0)||(t.trim().length>=4&&c.indexOf(t.trim())>=0))return true;
+  return t.split(/[^a-z0-9]+/).some(function(w){return w.length>=5&&CVSTOP.indexOf(w)<0&&c.indexOf(w)>=0});
+}
+function spRender(){
+  var el=document.getElementById("spl"),h=document.getElementById("spH"),s=null,i;
+  if(document.activeElement!==h)h.value=S.wk===undefined?20:S.wk;
+  for(i=S.sem.length-1;i>=0&&!s;i--)if(S.sem[i].c.some(function(c){return parseFloat(c.cr)>0&&c.n}))s=S.sem[i];
+  if(!s){el.innerHTML='<p class="note">Add named courses to your latest semester to see where to spend your study time.</p>';return}
+  var wk=parseFloat(S.wk===undefined?20:S.wk)||0,today=new Date();today.setHours(0,0,0,0);var rows=[],tot=0;
+  s.c.forEach(function(c){
+    var k=parseFloat(c.cr);if(!(k>0)||!c.n)return;
+    var g=actGP(c),w=g===null?1:Math.max(.3,4-g),soon=null;
+    S.dl.forEach(function(p){if((p.k||"Exam")==="Exam"&&p.d&&cvM(c.n,p.t)){var n=Math.round((new Date(p.d+"T00:00:00")-today)/864e5);if(n>=0&&n<=7&&(soon===null||n<soon))soon=n}});
+    var sc=k*w*(soon!==null?1.5:1);tot+=sc;rows.push({n:c.n,k:k,g:g,m:c.m,soon:soon,sc:sc});
+  });
+  rows.sort(function(a,b){return b.sc-a.sc});
+  el.innerHTML=rows.map(function(r,i){
+    var why=r.k+" credits &middot; "+(r.g===null?"no marks yet":GR[gi(parseFloat(r.m))][0]+" so far")+(r.soon!==null?" &middot; exam in "+r.soon+" day"+(r.soon===1?"":"s"):"");
+    return'<div class="imp"><span><b style="color:var(--ink)">#'+(i+1)+' '+esc(r.n)+'</b><br><span class="note">'+why+'</span></span><b>'+(wk*r.sc/tot).toFixed(1)+' h/week</b></div>';
+  }).join("")+'<p class="note">Split of your '+wk+' study hours per week.</p>';
+}
+function cvRender(){
+  var sel=document.getElementById("cvS"),cur=sel.value,names=[],out=document.getElementById("cvL");
+  S.sem.forEach(function(s){s.c.forEach(function(c){if(c.n&&names.indexOf(c.n)<0)names.push(c.n)})});
+  sel.innerHTML=names.length?names.map(function(n){return'<option'+(n===cur?" selected":"")+'>'+esc(n)+'</option>'}).join(""):'<option value="">No courses yet</option>';
+  if(!names.length){out.innerHTML='<p class="note">Add named courses in the Calculator tab to see everything about a course in one place.</p>';return}
+  var cn=sel.value||names[0],res=[];
+  S.sem.forEach(function(s){s.c.forEach(function(c){if(c.n===cn){var g=actGP(c);res.push(esc(s.name)+": "+esc(c.cr)+" credits, "+(g===null?"no marks yet":GR[gi(parseFloat(c.m))][0]+" ("+esc(c.m)+" marks)"))}})});
+  var ex=S.dl.filter(function(p){return cvM(cn,p.t)}),td=S.todo.filter(function(x){return cvM(cn,x.t)}),nt=S.notes.filter(function(x){return cvM(cn,x.c)}),at=S.at.filter(function(x){return cvM(cn,x.n)}),cl=S.cls.filter(function(x){return cvM(cn,x.t)});
+  function sec(t,a){return'<div class="cvs"><b>'+t+'</b>'+(a.length?a.join("<br>"):'<span class="note">None yet</span>')+'</div>'}
+  out.innerHTML=sec("Result",res)+
+    sec("Exams and deadlines",ex.map(function(p){return esc(p.k||"Exam")+": "+esc(p.t)+(p.d?" &middot; "+esc(p.d)+(p.m?" "+esc(p.m):""):"")}))+
+    sec("Tasks",td.map(function(x){return(x.x?"&#10003; ":"&#9744; ")+esc(x.t)+(x.d?" &middot; due "+esc(x.d):"")}))+
+    sec("Notes",nt.map(function(x){return"<b>"+esc(x.c)+"</b>: "+esc((x.t||"").slice(0,80))+((x.t||"").length>80?"...":"")}))+
+    sec("Attendance",at.map(function(x){var H=parseFloat(x.h),A=parseFloat(x.a);return H>0&&A>=0?esc(x.n)+": "+Math.round(Math.min(A,H)/H*100)+"% ("+A+"/"+H+" classes)":""}).filter(Boolean))+
+    sec("Classes",cl.map(function(x){return DAYS[x.d]+" "+esc(x.s)+"-"+esc(x.e)}));
+}
+/* first-visit tour and backup reminder */
+var TOUR=[["Add your results","Paste your result page in Import, or type marks for each course. Your CGPA shows at the top.","calc"],["Set a target","Open Plan to see the GPA you need each semester and try what-if grades.","plan"],["Stay on top of exams","Add exams in the Exams tab and classes in Study. You get a countdown and reminders.","exams"]],TI=0;
+function tourShow(i){TI=i;var t=TOUR[i];document.getElementById("tourN").textContent="Step "+(i+1)+" of "+TOUR.length;document.getElementById("tourT").textContent=t[0];document.getElementById("tourP").textContent=t[1];document.getElementById("tourNext").textContent=i<TOUR.length-1?"Next":"Done";tabShow(t[2],false);document.getElementById("tour").hidden=false}
+function tourEnd(){document.getElementById("tour").hidden=true;S.tour=1;save();tabShow("calc",false);bkCheck()}
+function tourInit(){var has=S.sem.some(function(s){return s.c.some(function(c){return c.m!==""})});if(!S.tour&&!has)tourShow(0);else if(!S.tour){S.tour=1;save()}}
+function bkCheck(){
+  var b=document.getElementById("bkb"),now=Date.now(),has=S.sem.some(function(s){return s.c.some(function(c){return c.m!==""})}),
+      due=S.lastBackup?now-S.lastBackup>21*864e5:now-(S.first||now)>7*864e5;
+  b.hidden=!(has&&due&&!(S.bsnooze&&S.bsnooze>now)&&document.getElementById("tour").hidden);
+}
+/* ===== grading scale presets, exam routine import, share ===== */
+var PRESETS={
+ ugc:{min:[80,75,70,65,60,55,50,45,40,0],pts:[4,3.75,3.5,3.25,3,2.75,2.5,2.25,2,0]},
+ us:{min:[97,93,90,87,83,80,77,70,60,0],pts:[4,4,3.7,3.3,3,2.7,2.3,2,1,0]},
+ strict:{min:[90,85,80,75,70,65,60,55,50,0],pts:[4,3.75,3.5,3.25,3,2.75,2.5,2.25,2,0]}
+},LET=["A+","A","A-","B+","B","B-","C+","C","D","F"];
+function gradesApply(){var pts=S&&S.gr?S.gr:PRESETS.ugc.pts;GR=LET.map(function(l,i){return[l,pts[i]]})}
+function setPreset(k){var p=PRESETS[k];if(!p)return;S.pre=k;S.min=p.min.slice();S.gr=p.pts.slice();gradesApply()}
+
+var IMP=[],MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11},
+    MONW=["january","february","march","april","june","july","august","september","october","november","december","sept"];
+function p2(n){return("0"+n).slice(-2)}
+function isMon(w){w=String(w).toLowerCase();return(w.length===3&&MON[w]!==undefined)||MONW.indexOf(w)>=0}
+function irScan(re,line,ok){var m;re.lastIndex=0;while((m=re.exec(line))){if(!ok||ok(m))return m}return null}
+function irDate(line){
+  var m;
+  if((m=irScan(/\b(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})\b/g,line)))return{y:+m[1],mo:+m[2]-1,d:+m[3],t:m[0]};
+  if((m=irScan(/\b(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})\b/g,line)))return{y:+m[3]<100?+m[3]+2000:+m[3],mo:+m[2]-1,d:+m[1],t:m[0]};
+  if((m=irScan(/\b(\d{1,2})(?:st|nd|rd|th)?[\s,.-]+([A-Za-z]{3,9})\b\.?(?:[\s,.-]+(\d{4})\b)?/g,line,function(x){return isMon(x[2])})))return{y:m[3]?+m[3]:null,mo:MON[m[2].slice(0,3).toLowerCase()],d:+m[1],t:m[0]};
+  if((m=irScan(/\b([A-Za-z]{3,9})\b\.?\s+(\d{1,2})(?:st|nd|rd|th)?\b(?:,?\s+(\d{4})\b)?/g,line,function(x){return isMon(x[1])})))return{y:m[3]?+m[3]:null,mo:MON[m[1].slice(0,3).toLowerCase()],d:+m[2],t:m[0]};
+  return null;
+}
+function irTime(s){
+  var m=s.match(/\b(\d{1,2}):(\d{2})\s*([AaPp]\.?[Mm]\.?)?/)||s.match(/\b(\d{1,2})\.(\d{2})\s*([AaPp]\.?[Mm]\.?)/),m2=!m&&s.match(/\b(\d{1,2})\s*([AaPp]\.?[Mm]\.?)/),h,mi,ap,txt;
+  if(m){h=+m[1];mi=+m[2];ap=m[3];txt=m[0]}else if(m2){h=+m2[1];mi=0;ap=m2[2];txt=m2[0]}else return null;
+  if(h>23||mi>59)return null;
+  if(ap){ap=ap.replace(/\./g,"").toLowerCase();if(ap==="pm"&&h<12)h+=12;if(ap==="am"&&h===12)h=0}else if(h>=1&&h<=7)h+=12;
+  return{h:p2(h)+":"+p2(mi),t:txt};
+}
+function irParse(text){
+  var out=[],yr=new Date().getFullYear(),today=new Date();today.setHours(0,0,0,0);
+  text.split(/\r?\n/).forEach(function(raw){
+    var line=raw.trim().replace(/^\d{1,3}\s*[.)]\s+/,"");if(!line)return;
+    var dt=irDate(line);if(!dt)return;
+    var y=dt.y,rest=line.replace(dt.t," "),tm=irTime(rest);
+    if(tm)rest=rest.replace(tm.t," ");
+    rest=rest.replace(/\d{1,2}\s*:\s*\d{2}\s*([ap]\.?m\.?)?/ig," ").replace(/\b(saturday|sunday|monday|tuesday|wednesday|thursday|friday|sat|sun|mon|tues|tue|wed|thurs|thur|thu|fri)\b\.?/ig," ")
+      .replace(/\(\s*\)/g," ").replace(/[\t|]+/g," - ").replace(/\s+/g," ").replace(/(\s*[-\u2013]\s*){2,}/g," - ").replace(/^[\s,:\-\u2013]+|[\s,:\-\u2013]+$/g,"").trim();
+    if(y===null){y=yr;if(new Date(y,dt.mo,dt.d)<today-30*864e5)y++}
+    var d=new Date(y,dt.mo,dt.d);if(d.getMonth()!==dt.mo||d.getDate()!==dt.d)return;
+    out.push({t:rest||"Exam",d:dkey(d),m:tm?tm.h:"",on:false});
+  });
+  return out;
+}
+function irShow(){
+  var rows=irParse(document.getElementById("irBox").value),names=[],matched=0,pv=document.getElementById("irPrev"),b=document.getElementById("irBtns");
+  S.sem.forEach(function(s){s.c.forEach(function(c){if(c.n)names.push(c.n)})});
+  rows.forEach(function(r){r.mt=names.some(function(n){return cvM(n,r.t)});if(r.mt)matched++});
+  rows.forEach(function(r){r.on=matched?r.mt:true});
+  IMP=rows;
+  if(!rows.length){pv.innerHTML='<p class="warn">I could not find any dates. Each exam needs a date on the same line, like 17 Oct 2026 or 17/10/2026.</p>';b.hidden=true;return}
+  pv.innerHTML='<p class="note"><b>'+rows.length+' exams</b> found.'+(matched?" "+matched+" match your courses and are selected. Tick any others you need.":" Tick the ones you need.")+'</p><table><thead><tr><th></th><th>Date</th><th>Time</th><th>Subject</th></tr></thead><tbody>'+rows.map(function(r,i){return'<tr><td><input type="checkbox" data-ir="'+i+'"'+(r.on?" checked":"")+' style="width:auto" aria-label="Include"></td><td>'+esc(r.d)+'</td><td>'+esc(r.m||"-")+'</td><td>'+esc(r.t)+'</td></tr>'}).join("")+'</tbody></table>';
+  b.hidden=false;
+}
+function irAdd(){
+  var n=0;
+  IMP.forEach(function(r){if(!r.on)return;if(S.dl.some(function(p){return p.d===r.d&&(p.t||"")===r.t}))return;S.dl.push({t:r.t,d:r.d,h:"",k:"Exam",m:r.m});n++});
+  IMP=[];document.getElementById("irPrev").innerHTML='<p class="note">Added '+n+' exam'+(n===1?"":"s")+'. See your routine above.</p>';document.getElementById("irBtns").hidden=true;
+  dlList();dlCalc();save();toast("Added "+n+" exam"+(n===1?"":"s")+" to your routine.");
+}
+var SITE_URL="",SHARE_TXT="I use this free CGPA calculator to track my results, plan my target and manage exams. Try it:";
+function siteUrl(){return SITE_URL||location.href.split("#")[0]}
+function shareTo(k){
+  var u=encodeURIComponent(siteUrl()),t=encodeURIComponent(SHARE_TXT);
+  window.open(k==="w"?"https://wa.me/?text="+t+"%20"+u:k==="f"?"https://www.facebook.com/sharer/sharer.php?u="+u:"https://t.me/share/url?url="+u+"&text="+t,"_blank","noopener");
+}
+function shareCopy(){var u=siteUrl();try{navigator.clipboard.writeText(u).then(function(){toast("Link copied.")},function(){toast(u)})}catch(e){toast(u)}}
+function shareHero(){
+  if(navigator.share){navigator.share({title:"CGPA Tracker",text:SHARE_TXT,url:siteUrl()}).catch(function(){})}
+  else{tabShow("more");var c=document.getElementById("shareCard");if(c&&c.scrollIntoView)c.scrollIntoView({behavior:"smooth"})}
+}
+function wiCand(c){var k=parseFloat(c.cr),m=parseFloat(c.m);return k>0&&(c.m===""||isNaN(m)||GR[gi(m)][1]===0)}
+function wiList(){
+  var all=document.getElementById("wall").checked,h="";
+  S.sem.forEach(function(s,i){s.c.forEach(function(c,j){
+    if(!(parseFloat(c.cr)>0)||!(all||wiCand(c)))return;
+    var m=parseFloat(c.m),now=(c.m===""||isNaN(m))?"no result":GR[gi(m)][0],key=i+"_"+j,v=S.wi[key];
+    h+='<div class="row2"><span>'+esc(c.n||"Untitled course")+' <span class="note">('+esc(s.name)+', '+esc(c.cr)+' cr, now '+now+')</span></span><select data-wi="'+key+'" aria-label="What-if grade"><option value="">Actual</option>'+GR.map(function(g,q){return'<option value="'+q+'"'+(v===q?" selected":"")+'>'+g[0]+'</option>'}).join("")+'</select></div>';
+  })});
+  document.getElementById("wl").innerHTML=h||'<p class="note">No failed, withdrawn, or blank-mark courses found. Tick "Show all courses" to test any course.</p>';
+}
+function wiAll(q){S.wi={};S.sem.forEach(function(s,i){s.c.forEach(function(c,j){if(wiCand(c))S.wi[i+"_"+j]=q})});wiList();wiCalc();save()}
+function wiCalc(){
+  var L=[],GA=[],GB=[],rows="",el=document.getElementById("wr"),any=Object.keys(S.wi).length>0;
+  function simGP(c,i,j){var w=S.wi[i+"_"+j];return w!==undefined?GR[w][1]:actGP(c)}
+  S.sem.forEach(function(s,i){
+    var a={cr:0,pt:0},b={cr:0,pt:0};
+    s.c.forEach(function(c,j){
+      var k=parseFloat(c.cr);if(!(k>0))return;
+      var ag=actGP(c),sg=simGP(c,i,j);
+      if(ag!==null){a.cr+=k;a.pt+=k*ag}
+      if(sg!==null){b.cr+=k;b.pt+=k*sg}
+    });
+    if(a.cr||b.cr){var ga=a.cr?a.pt/a.cr:null,gb=b.cr?b.pt/b.cr:null,d=(ga!==null&&gb!==null)?gb-ga:null;L.push(shortName(s.name));GA.push(ga);GB.push(gb);
+      rows+='<tr><td>'+esc(s.name)+'</td><td>'+(ga===null?"-":f2(ga))+'</td><td>'+(gb===null?"-":f2(gb))+'</td><td class="'+(d>0.004?"up":d<-0.004?"dn":"")+'">'+(d===null?"-":(d>=0?"+":"")+f2(d))+'</td></tr>'}
+  });
+  if(!any){el.className="res";el.innerHTML="<p>Pick a grade for a course above, or use a quick button, to see the difference.</p>";return}
+  var A=sumMap(rules(actGP)),B=sumMap(rules(simGP)),d=B.cg-A.cg;
+  el.className="res"+(d>0.004?" ok":d<-0.004?" no":"");
+  el.innerHTML='<h3>CGPA: '+f2(A.cg)+' &rarr; '+f2(B.cg)+' ('+(d>=0?"+":"")+f2(d)+')</h3><p>Credits counted: '+A.cr+' &rarr; '+B.cr+' (retake rule applied)</p><div class="pv" style="max-height:none"><table><thead><tr><th>Semester</th><th>Actual GPA</th><th>What-if GPA</th><th>Change</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+gBars(L,GA,GB);
+}
+function exDef(){return[{n:"Class tests",f:"20",o:""},{n:"Midterm",f:"30",o:""},{n:"Final exam",f:"50",o:""}]}
+function exList(){
+  document.getElementById("exl").innerHTML=S.ex.map(function(p,i){return'<div class="row3"><input data-ex="'+i+'" data-exf="n" value="'+esc(p.n)+'" aria-label="Part name"><input type="number" min="0" inputmode="decimal" data-ex="'+i+'" data-exf="f" value="'+esc(p.f)+'" aria-label="Full marks"><input type="number" min="0" inputmode="decimal" data-ex="'+i+'" data-exf="o" value="'+esc(p.o)+'" placeholder="not yet" aria-label="Obtained marks"><button class="x" data-exd="'+i+'" aria-label="Remove part">&times;</button></div>'}).join("");
+}
+function exCalc(){
+  var total=0,got=0,rem=0,el=document.getElementById("exr");
+  S.ex.forEach(function(p){var f=parseFloat(p.f)||0,o=parseFloat(p.o);total+=f;if(p.o!==""&&!isNaN(o))got+=Math.min(o,f);else rem+=f});
+  if(!total){el.className="res";el.innerHTML="<p>Add the full marks for each part.</p>";return}
+  var h="<h3>"+got+" of "+total+" marks so far</h3>";
+  if(!rem){var g=GR[gi(got/total*100)];el.className="res"+(g[1]>=3.5?" ok":g[1]===0?" no":"");el.innerHTML=h+"<p>All parts entered. Your grade: <b>"+g[0]+"</b> ("+g[1].toFixed(2)+")</p>";return}
+  var rows="",bars="";
+  GR.slice(0,9).forEach(function(g,i){
+    var need=S.min[i]/100*total-got,st,pc;
+    if(need<=1e-9){st='<span class="up">Already secured</span>';bars+='<div class="db2"><span>'+g[0]+'</span><i class="ok" style="width:100%"></i><span>Secured</span></div>'}
+    else if(need>rem+1e-9){st='<span class="dn">Not possible</span>';bars+='<div class="db2"><span>'+g[0]+'</span><i class="no" style="width:100%"></i><span>Not possible</span></div>'}
+    else{pc=Math.round(need/rem*100);st="Need <b>"+(Math.ceil(need*10-1e-6)/10)+"</b> of "+rem+" ("+pc+"%)";bars+='<div class="db2"><span>'+g[0]+'</span><i style="width:'+pc+'%"></i><span>'+pc+'%</span></div>'}
+    rows+="<tr><td>"+g[0]+"</td><td>"+Math.ceil(S.min[i]/100*total*10-1e-6)/10+"</td><td>"+st+"</td></tr>";
+  });
+  el.className="res";
+  el.innerHTML=h+"<p>"+rem+" marks still to come. Marks needed from them:</p><table><thead><tr><th>Grade</th><th>Total needed</th><th>From remaining parts</th></tr></thead><tbody>"+rows+"</tbody></table><h4 style=\"margin:14px 0 8px;font-family:Sora,sans-serif\">Effort needed per grade (% of remaining marks)</h4>"+bars;
+}
+function wiApply(){
+  var n=Object.keys(S.wi).length;if(!n)return;
+  if(!confirm("Write these "+n+" grades into your real data? Marks will be set to the lowest marks of each grade."))return;
+  Object.keys(S.wi).forEach(function(k){var p=k.split("_");S.sem[p[0]].c[p[1]].m=String(S.min[S.wi[k]])});
+  S.wi={};render();
+}
+function earned(){return sumMap(RT,true)}
+function lvl(T){var E=earned();document.getElementById("se").textContent=E.cr?f2(E.cg):"-";var k=0;for(;k<GR.length-1;k++)if(GR[k][1]<=T.cg+1e-9)break;document.getElementById("lv").textContent=T.cr?"CGPA, "+GR[k][0]+" level":"CGPA / 4.00"}
+function goalMsg(s,i,t){
+  var el=document.getElementById("sg"+i),g=parseFloat(s.goal);if(!el)return;
+  var pend=0;s.c.forEach(function(c){var k=parseFloat(c.cr);if(k>0&&c.m==="")pend+=k});
+  if(!pend||isNaN(g)){el.textContent=pend?"Enter a goal to see the marks you need in "+pend+" pending credits.":"Leave marks empty for upcoming courses and set a goal. I will tell you the marks you need.";return}
+  var req=(g*(t.cr+pend)-t.pt)/pend;
+  if(req>4+1e-9)el.textContent="Goal "+f2(g)+" is not reachable. Best possible is "+f2((t.pt+4*pend)/(t.cr+pend))+".";
+  else if(req<=0)el.textContent="Goal already secured, even with a weak result in the pending courses.";
+  else{var k=need(req);el.textContent="Need an average GP of "+f2(req)+" in "+pend+" pending credits: about "+GR[k][0]+" ("+S.min[k]+"+ marks) per course."}
+}
+function insights(T){
+  var idx=[];S.sem.forEach(function(s,i){if(semStat(s).cr>0)idx.push(i)});
+  var tr=document.getElementById("trend");
+  if(!idx.length)tr.innerHTML='<p class="note">Add marks to see your GPA trend.</p>';
+  else{
+    var W=460,H=215,n=idx.length,pl=30,pr=14,pt=22,pb=44,bw=Math.min(46,(W-pl-pr)/n*.6);
+    var X=function(i){return pl+(W-pl-pr)*(i+.5)/n},Y=function(v){return H-pb-(v/4)*(H-pt-pb)};
+    var v='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto" role="img" aria-label="Semester GPA and cumulative CGPA">'+gAxis(W,H,pl,pr,Y,[0,1,2,3,4]);
+    var tg=parseFloat(S.tg);
+    if(tg>0&&tg<=4)v+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(tg)+'" y2="'+Y(tg)+'" stroke="var(--warn)" stroke-dasharray="5 4" stroke-width="1.5"/><text x="'+(W-pr)+'" y="'+(Y(tg)-4)+'" text-anchor="end" font-size="10" fill="var(--warn)">Target '+f2(tg)+'</text>';
+    var cum=[];
+    idx.forEach(function(si,k){
+      var g=semStat(S.sem[si]).gpa;
+      v+='<rect x="'+(X(k)-bw/2)+'" y="'+Y(g)+'" width="'+bw+'" height="'+(Y(0)-Y(g))+'" rx="6" fill="var(--p)" opacity=".85"/><text x="'+X(k)+'" y="'+(Y(g)+14)+'" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">'+f2(g)+'</text><text x="'+X(k)+'" y="'+(H-pb+14)+'" text-anchor="middle" font-size="10" fill="var(--mute)">'+esc(shortName(S.sem[si].name))+'</text>';
+      cum.push(sumMap(rules(actGP,S.sem.slice(0,si+1))).cg);
+    });
+    v+='<polyline fill="none" stroke="var(--p2)" stroke-width="3" stroke-linejoin="round" points="'+cum.map(function(c,k){return X(k)+","+Y(c)}).join(" ")+'"/>';
+    cum.forEach(function(c,k){v+='<circle cx="'+X(k)+'" cy="'+Y(c)+'" r="4.5" fill="var(--card)" stroke="var(--p2)" stroke-width="2.5"/><text x="'+X(k)+'" y="'+(Y(c)-9)+'" text-anchor="middle" font-size="10" font-weight="700" fill="var(--ink)">'+f2(c)+'</text>'});
+    v+='<rect x="'+pl+'" y="'+(H-14)+'" width="10" height="10" rx="2" fill="var(--p)"/><text x="'+(pl+14)+'" y="'+(H-5)+'" font-size="10" fill="var(--mute)">Semester GPA</text><line x1="'+(pl+110)+'" x2="'+(pl+128)+'" y1="'+(H-9)+'" y2="'+(H-9)+'" stroke="var(--p2)" stroke-width="3"/><text x="'+(pl+132)+'" y="'+(H-5)+'" font-size="10" fill="var(--mute)">CGPA so far</text>';
+    tr.innerHTML=v+'</svg>';
+  }
+  var cnt=GR.map(function(){return 0}),list=[];
+  S.sem.forEach(function(s){s.c.forEach(function(c){var m=parseFloat(c.m),k=parseFloat(c.cr);if(c.m!==""&&!isNaN(m)&&k>0){var g=gi(m);cnt[g]++;list.push({n:c.n||"Untitled course",s:s.name,cr:k,g:g})}})});
+  var mx=Math.max.apply(null,cnt.concat([1])),d="";
+  cnt.forEach(function(q,i){if(q)d+='<div class="db"><span>'+GR[i][0]+'</span><i style="width:'+(q/mx*100)+'%"></i><span>'+q+'</span></div>'});
+  document.getElementById("dist").innerHTML=d||'<p class="note">Add marks to see your grades.</p>';
+  var im=list.filter(function(c){return GR[c.g][1]<GR[1][1]&&T.cr}).map(function(c){c.gain=(GR[1][1]-GR[c.g][1])*c.cr/T.cr;return c}).sort(function(a,b){return b.gain-a.gain}).slice(0,4);
+  document.getElementById("impv").innerHTML=im.length?im.map(function(c){return '<div class="imp"><span>'+esc(c.n)+' <span class="note">('+esc(c.s)+', '+c.cr+' cr, now '+GR[c.g][0]+')</span></span><b>+'+c.gain.toFixed(2)+' CGPA</b></div>'}).join("")+'<p class="note">Estimated gain if each course is raised to A (retake or improvement exam) and your university replaces the old grade.</p>':'<p class="note">Add marks to see which courses give the biggest CGPA boost.</p>';
+  var gt='<table><thead><tr><th>Marks</th><th>Grade</th><th>Point</th></tr></thead><tbody>';
+  GR.forEach(function(g,i){gt+='<tr><td>'+S.min[i]+'-'+(i?S.min[i-1]-1:100)+'</td><td>'+g[0]+'</td><td>'+g[1].toFixed(2)+'</td></tr>'});
+  document.getElementById("gt").innerHTML=gt+'</tbody></table>';
+}
+function plan(T){T=earned();
+  var tg=parseFloat(S.tg)||0,tc=parseFloat(S.tc)||0,rs=parseFloat(S.rs)||1,rem=tc-T.cr,res=document.getElementById("res");
+  var pct=Math.max(0,Math.min(100,tc?T.cr/tc*100:0));
+  document.getElementById("pb").style.width=pct+"%";
+  document.getElementById("pt").textContent=T.cr+" of "+tc+" credits done ("+Math.round(pct)+"%). "+Math.max(rem,0)+" credits left.";
+  var h="",cls="res";
+  if(rem<=0){h="<h3>Degree credits complete</h3><p>Your final CGPA is <b>"+f2(T.cg)+"</b>.</p>"}
+  else{
+    var req=(tg*tc-T.pt)/rem,mx=(T.pt+4*rem)/tc,per=rem/Math.max(rs,1);
+    if(req>4+1e-9){cls+=" no";h="<h3>Target "+f2(tg)+" is not reachable</h3><p>Even with A+ in every remaining course, the best CGPA you can reach is <b>"+f2(mx)+"</b>.</p><p>Try a target of "+f2(Math.floor(mx*100)/100)+" or lower.</p>"}
+    else if(req<=0){cls+=" ok";h="<h3>Target already secured</h3><p>Your target "+f2(tg)+" is safe even with a very low GPA ahead. Aim higher.</p>"}
+    else{
+      var k=need(req),easy=req<=2.5;cls+=easy?" ok":"";
+      h="<h3>You need a "+f2(req)+" average GPA from now</h3>"+
+        "<p>Over your remaining <b>"+rem+" credits</b> ("+rs+" semesters, about "+Math.round(per)+" credits each).</p>"+
+        "<p>That means at least <b>"+GR[k][0]+"</b> on average, which is about <b>"+S.min[k]+"+ marks</b> in each course.</p>"+
+        (req>3.7?"<p>This is very hard. Focus on high-credit courses first, they move your CGPA most.</p>":"<p>Tip: high-credit courses move your CGPA the most. Protect those first.</p>");
+    }
+  }
+  res.className=cls;res.innerHTML=h;
+  document.getElementById("pgraph").innerHTML=pathChart(T,tc,rs,tg);
+  var nc=parseFloat(S.nc)||0,rows="";
+  [4,3.75,3.5,3.25,3,2.5].forEach(function(g){var k=need(g);rows+="<tr><td>"+g.toFixed(2)+"</td><td>"+S.min[k]+"+ ("+GR[k][0]+")</td><td><b>"+f2((T.pt+g*nc)/(T.cr+nc||1))+"</b></td></tr>"});
+  document.getElementById("wi").innerHTML=rows;
+}
+
+document.addEventListener("input",function(e){
+  var t=e.target,d=t.dataset;
+  if(d.f){var s=S.sem[d.s];if(d.f==="sn")s.name=t.value;else if(d.f==="goal")s.goal=t.value;else s.c[d.c][d.f]=t.value;calc()}
+  else if(d.mi){S.min[d.mi]=parseFloat(t.value)||0;S.pre="custom";document.getElementById("scPre").value="custom";calc()}
+  else if(d.ir!==undefined){IMP[d.ir].on=t.checked}
+  else if(d.qf!==undefined){QG[d.qi][d.qf]=t.value;qgCalc()}
+  else if(t.id==="qgC"||t.id==="qgK"){qgCalc()}
+  else if(t.id==="spH"){S.wk=t.value;spRender();save()}
+  else if(t.id==="cvS"){cvRender()}
+  else if(d.tdc!==undefined){S.todo[d.tdc].x=t.checked;tdRender();save()}
+  else if(d.ntf!==undefined){S.notes[d.nti][d.ntf]=t.value;save()}
+  else if(d.npf!==undefined){S.np[d.npi][d.npf]=t.value;npCalc();save()}
+  else if(d.atf!==undefined){S.at[d.ati][d.atf]=t.value;atCalc();save()}
+  else if(d.dlf!==undefined){S.dl[d.dli][d.dlf]=t.value;dlCalc();save()}
+  else if(t.id==="atReq"){S.atReq=t.value;atCalc();save()}
+  else if(d.exf!==undefined){S.ex[d.ex][d.exf]=t.value;exCalc();save()}
+  else if(d.wi){if(t.value==="")delete S.wi[d.wi];else S.wi[d.wi]=+t.value;wiCalc();save()}
+  else if(t.id==="tg"){S.tg=t.value;calc()}else if(t.id==="tc"){S.tc=t.value;calc()}
+  else if(t.id==="rs"){S.rs=t.value;calc()}else if(t.id==="nc"){S.nc=t.value;calc()}
+});
+document.addEventListener("click",function(e){
+  var d=e.target.closest("button");if(!d)return;var a=d.dataset;
+  if(a.ac!==undefined){S.sem[a.ac].c.push({n:"",cr:"",m:""});render()}
+  else if(a.dc){var p=a.dc.split("_");S.sem[p[0]].c.splice(p[1],1);S.wi={};render()}
+  else if(a.wq!==undefined){wiAll(+a.wq)}
+  else if(a.exd!==undefined){S.ex.splice(a.exd,1);exList();exCalc();save()}
+  else if(a.nc!==undefined){alert("Requests are not open yet. The site owner needs to add contact details.")}
+  else if(a.qd!==undefined){QG.splice(a.qd,1);qgList();qgCalc()}
+  else if(a.cld!==undefined){S.cls.splice(a.cld,1);clsRender();save()}
+  else if(a.tdd!==undefined){S.todo.splice(a.tdd,1);tdRender();save()}
+  else if(a.fcs!==undefined){FCS.show=true;fcRender()}
+  else if(a.fck!==undefined){fcAnswer(a.fck==="1")}
+  else if(a.fcd!==undefined){S.fc.splice(a.fcd,1);FCS.show=false;fcRender();save()}
+  else if(a.ntd!==undefined){S.notes.splice(a.ntd,1);ntList();save()}
+  else if(a.npd!==undefined){S.np.splice(a.npd,1);npList();npCalc();save()}
+  else if(a.atd!==undefined){S.at.splice(a.atd,1);atList();atCalc();save()}
+  else if(a.dld!==undefined){S.dl.splice(a.dld,1);dlList();dlCalc();save()}
+  else if(a.ics!==undefined){icsDownload([S.dl[a.ics]])}
+  else if(a.rt!==undefined){var rb=document.getElementById("rt_"+a.rt);if(rb)rb.hidden=!rb.hidden}
+  else if(a.rv!==undefined){var q=a.rv.lastIndexOf("_"),rid=a.rv.slice(0,q),rn=+a.rv.slice(q+1);S.rated[rid]=rn;save();hubRender();if(hubOK())window.open("https://wa.me/"+CONTACT_WA+"?text="+encodeURIComponent("My rating for resource "+rid+": "+rn+" out of 5 stars."),"_blank","noopener")}
+  else if(a.ds!==undefined){if(confirm("Delete this semester?")){S.sem.splice(a.ds,1);S.wi={};render()}}
+});
+document.getElementById("addSem").onclick=function(){S.sem.push({name:"Semester "+(S.sem.length+1),c:[{n:"",cr:"",m:""},{n:"",cr:"",m:""},{n:"",cr:"",m:""},{n:"",cr:"",m:""}]});render()};
+document.getElementById("exp").onclick=function(){var b=new Blob([JSON.stringify(S)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="cgpa-backup.json";a.click();S.lastBackup=Date.now();save();bkCheck()};
+document.getElementById("imp").onclick=function(){document.getElementById("file").click()};
+document.getElementById("file").onchange=function(e){var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o.sem){S=o;if(!S.min)S.min=MIN.slice();render()}else alert("Not a valid backup file.")}catch(x){alert("Not a valid backup file.")}};if(e.target.files[0])r.readAsText(e.target.files[0])};
+document.getElementById("rst").onclick=function(){if(confirm("Delete all your saved data? This cannot be undone.")){S=def();render()}};
+document.getElementById("theme").onclick=function(){var r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dk?"light":"dark"};
+document.getElementById("pr").onclick=function(){tabShow("calc",false);window.print()};
+var PARSED=null,GL=/^(A\+|A-|A|B\+|B-|B|C\+|C|D|F)$/,NUM=/^\d+(\.\d+)?$/,WT=/^(W|WD|I|INC|AB|X)$/,CODE=/^[A-Z]{2,6}-?\d{3,4}[A-Z]?$/,CODEIN=/\b[A-Z]{2,6}[- ]?\d{3,4}\b/,SKIP=/\b(total|cumulative|cgpa|cgp|balance|required|matric|registration|department|programme|admission)\b|^name\s*:/i;
+function splitLine(l){
+  if(l.indexOf("\t")>=0)return l.split("\t").map(function(x){return x.trim()});
+  if((l.match(/,/g)||[]).length>=3&&l.indexOf("(")<0)return l.split(",").map(function(x){return x.trim()});
+  var t=l.split(/\s{2,}|\|/).map(function(x){return x.trim()}).filter(Boolean);
+  return t.length<2?l.split(/\s+/):t;
+}
+function findCode(t){for(var i=0;i<t.length;i++){if(CODE.test(t[i]))return i;if(/^[A-Z]{2,6}$/.test(t[i])&&/^\d{3,4}$/.test(t[i+1]||""))return i}return -1}
+function tryCols(t,cols){
+  var cr=parseFloat(t[cols.cr]),res=null;
+  if(!(cr>0&&cr<=6))return null;
+  if(cols.m!==undefined&&NUM.test(t[cols.m]||""))res={m:parseFloat(t[cols.m])};
+  else if(cols.gl!==undefined&&GL.test(t[cols.gl]||""))res={l:t[cols.gl]};
+  else if(cols.gl!==undefined&&WT.test(t[cols.gl]||""))res={w:t[cols.gl]};
+  else if(cols.gp!==undefined&&NUM.test(t[cols.gp]||""))res={p:parseFloat(t[cols.gp])};
+  if(!res)return null;
+  return{cr:cr,res:res,nm:[t[cols.cd],t[cols.nm]].filter(Boolean).join(" ")};
+}
+function tryHeur(t){
+  var k=findCode(t),st=k<0?0:k+(CODE.test(t[k])?1:2),ci=-1,ri=-1,i;
+  for(i=st;i<t.length&&ci<0;i++)if(/^\d+\.\d+$/.test(t[i])&&parseFloat(t[i])>0&&parseFloat(t[i])<=6)ci=i;
+  for(i=st;i<t.length&&ci<0;i++)if(NUM.test(t[i])&&parseFloat(t[i])>0&&parseFloat(t[i])<=6)ci=i;
+  if(ci<0)return null;
+  var res=null;
+  t.forEach(function(x,j){if(j>ci&&(GL.test(x)||WT.test(x)))ri=j});
+  if(ri>0)res=GL.test(t[ri])?{l:t[ri]}:{w:t[ri]};
+  else for(i=ci+1;i<t.length;i++)if(NUM.test(t[i])){var v=parseFloat(t[i]);res=v>4?{m:v}:{p:v};break}
+  if(!res)return null;
+  return{cr:parseFloat(t[ci]),res:res,nm:t.slice(k<0?0:k,ci).filter(Boolean).join(" ")};
+}
+function parseResults(text){
+  var lines=text.split(/\r?\n/).map(function(x){return x.replace(/\s+$/,"").replace(/^ +/,"")}).filter(Boolean),cols=null,cur={name:"Imported semester",c:[]},sems=[],skipped=[],req=0;
+  function flush(){if(cur.c.length)sems.push(cur)}
+  lines.forEach(function(line){
+    var rq=line.match(/total required credit\s*:?\s*(\d+)/i);if(rq)req=+rq[1];
+    var low=line.toLowerCase(),t=splitLine(line);
+    if(/credit/.test(low)&&/(grade|point|mark|gpa|score)/.test(low)&&!/total|cumulative/.test(low)&&!t.some(function(x){return NUM.test(x)})){
+      cols={n:t.length,tab:line.indexOf("\t")>=0};
+      t.forEach(function(h,i){var q=h.toLowerCase();
+        if(/credit/.test(q))cols.cr=i;else if(/point|gpa|\bgp\b/.test(q))cols.gp=i;else if(/mark|score|total/.test(q))cols.m=i;else if(/grade|letter/.test(q))cols.gl=i;else if(/code/.test(q))cols.cd=i;else if(/title|name|course/.test(q))cols.nm=i});
+      return}
+    var sm=line.match(/semester\s*:\s*([A-Za-z]+\s*-?\s*\d{4})/i),en=line.match(/semester enrolled\s*:\s*([A-Za-z]+(?:\s+[A-Za-z]+)?)/i);
+    if((sm||en)&&!CODEIN.test(line)){
+      if(sm){flush();cur={name:sm[1].replace(/\s+/g,""),c:[]}}
+      if(en)cur.name=cur.name.replace(/ \(.*\)$/,"")+" ("+en[1].trim()+")";
+      return}
+    var hasL=t.some(function(x){return GL.test(x)});
+    if(/\b(semester|trimester|term)\b/i.test(line)&&!hasL&&t.length<=4&&!/\d\.\d/.test(line)){flush();cur={name:line.replace(/[:\-\s]+$/,"").slice(0,40),c:[]};return}
+    if(SKIP.test(line)&&!CODEIN.test(line))return;
+    var r=null;
+    if(cols&&cols.cr!==undefined&&((cols.tab&&line.indexOf("\t")>=0)||t.length===cols.n))r=tryCols(t,cols);
+    if(!r)r=tryHeur(t);
+    if(!r||r.res.m>100){if(/\d/.test(line))skipped.push(line);return}
+    var res=r.res,m;
+    if(res.m!==undefined)m=res.m;
+    else if(res.l)m=S.min[GR.findIndex(function(g){return g[0]===res.l})];
+    else if(res.w)m="";
+    else{var bi=0,bd=9;GR.forEach(function(g,i){var d=Math.abs(g[1]-res.p);if(d<bd){bd=d;bi=i}});m=S.min[bi]}
+    cur.c.push({n:r.nm.slice(0,90),cr:String(r.cr),m:String(m),r:res.m!==undefined?res.m+" marks":res.w?"Withdrawn / incomplete ("+res.w+")":res.l||("GP "+res.p)});
+  });
+  flush();return{sems:sems,skipped:skipped,req:req};
+}
+function showParsed(){
+  var pv=document.getElementById("pPrev"),b=document.getElementById("pBtns");
+  PARSED=parseResults(document.getElementById("pasteBox").value);
+  var n=0,h="";
+  PARSED.sems.forEach(function(s){n+=s.c.length;h+="<h4>"+esc(s.name)+"</h4><table><thead><tr><th>Course</th><th>Credit</th><th>Result</th></tr></thead><tbody>"+s.c.map(function(c){return"<tr><td>"+esc(c.n||"-")+"</td><td>"+c.cr+"</td><td>"+esc(c.r)+"</td></tr>"}).join("")+"</tbody></table>"});
+  if(!n){pv.innerHTML='<p class="warn">I could not find any courses. Make sure the pasted text includes the credit and a grade or marks for each course.</p>';b.hidden=true;PARSED=null;return}
+  h='<p class="note"><b>'+n+' courses</b> found in '+PARSED.sems.length+' semester(s). Grade-only results are saved as the lowest marks of that grade. Check them before adding.</p>'+h;
+  if(PARSED.skipped.length)h+='<p class="warn">Skipped '+PARSED.skipped.length+' line(s) I could not read: '+PARSED.skipped.slice(0,3).map(esc).join(" | ")+(PARSED.skipped.length>3?" ...":"")+'</p>';
+  if(PARSED.req)h+='<p class="note">Total degree credits will be set to '+PARSED.req+'.</p>';
+  pv.innerHTML=h;b.hidden=false;
+}
+function applyParsed(rp){
+  if(!PARSED||!PARSED.sems.length)return;
+  var blank=S.sem.every(function(s){return s.c.every(function(c){return c.m===""&&c.n===""})});
+  if(rp){if(!confirm("Replace all your current data with the imported results?"))return;S.sem=[]}
+  else if(blank)S.sem=[];
+  if(PARSED.req)S.tc=PARSED.req;
+  PARSED.sems.forEach(function(s){S.sem.push({name:s.name,c:s.c.map(function(c){return{n:c.n,cr:c.cr,m:c.m}})})});
+  PARSED=null;document.getElementById("pPrev").innerHTML='<p class="note">Imported. Check your semesters below and rename them if needed.</p>';document.getElementById("pBtns").hidden=true;
+  render();document.getElementById("sems").scrollIntoView({behavior:"smooth"});
+}
+document.getElementById("pParse").onclick=showParsed;
+document.getElementById("pAdd").onclick=function(){applyParsed(false)};
+document.getElementById("pRep").onclick=function(){applyParsed(true)};
+document.getElementById("pSample").onclick=function(){
+  document.getElementById("pasteBox").value="Semester: Spring-2025\tSemester Enrolled: First Semester\nSL\tISCED Code\tCourse Code\tCourse Name\tCredit Hours\tGrade\tPoint\tGrade Point\tComments\n1\t0732\tCCE-1102\tEngineering Drawing Sessional\t1.00\tB+\t3.25\t3.25\t\n2\t0713\tCCE-1103\tBasic Electrical Engineering\t3.00\tF\t0.00\t0.00\t\n3\t0613\tCCE-1105\tComputer Fundamentals and Programming\t3.00\tA+\t4.00\t12.00\t\n4\t0541\tMATH-1101\tMathematics I (Differential and Integral Calculus)\t3.00\tC+\t2.50\t7.50\t\nTotal Credit Hours\t10\tGPA\t2.275\t22.75\nTotal Required Credit: 161";
+  showParsed();
+};
+document.getElementById("wall").onchange=wiList;
+document.getElementById("rq").oninput=hubRender;
+document.getElementById("rs2").onchange=hubRender;
+document.getElementById("clAdd").onclick=function(){var t=document.getElementById("clT").value.trim();if(!t)return;S.cls.push({d:+document.getElementById("clD").value,s:document.getElementById("clS").value||"09:00",e:document.getElementById("clE").value||"10:00",t:t});document.getElementById("clT").value="";clsRender();save()};
+document.getElementById("tdAdd").onclick=function(){var t=document.getElementById("tdT").value.trim();if(!t)return;S.todo.push({t:t,d:document.getElementById("tdD").value,x:false});document.getElementById("tdT").value="";tdRender();save()};
+document.getElementById("fcAdd").onclick=function(){var q=document.getElementById("fcQ").value.trim(),a=document.getElementById("fcA").value.trim();if(!q||!a)return;S.fc.push({q:q,a:a,b:1,t:0});document.getElementById("fcQ").value="";document.getElementById("fcA").value="";FCS.show=false;fcRender();save()};
+document.getElementById("ntAdd").onclick=function(){S.notes.push({c:"",t:""});ntList();save()};
+document.getElementById("npAdd").onclick=function(){S.np.push({n:"",cr:"",g:"1"});npList();npCalc();save()};
+document.getElementById("cfQ").oninput=collabRender;
+document.getElementById("cfA").onchange=collabRender;
+document.getElementById("cpW").onclick=function(){cfPost(0)};
+document.getElementById("cpM").onclick=function(){cfPost(1)};
+document.getElementById("erPrint").onclick=function(){document.body.classList.add("per");tabShow("exams",false);window.print()};
+window.addEventListener("afterprint",function(){document.body.classList.remove("per")});
+document.getElementById("erIcs").onclick=function(){icsDownload(erList())};
+document.getElementById("erCopy").onclick=erCopy;
+document.getElementById("qgAdd").onclick=function(){QG.push({c:"",g:""});qgList()};
+document.getElementById("qgClr").onclick=function(){document.getElementById("qgC").value="";document.getElementById("qgK").value="";qgInit()};
+document.getElementById("cvAdd").onclick=function(){var i=document.getElementById("cvT"),t=i.value.trim(),cn=document.getElementById("cvS").value;if(!t||!cn)return;S.todo.push({t:cn+": "+t,d:"",x:false});i.value="";tdRender();cvRender();save()};
+document.getElementById("tourNext").onclick=function(){if(TI<TOUR.length-1)tourShow(TI+1);else tourEnd()};
+document.getElementById("tourSkip").onclick=tourEnd;
+document.getElementById("tourBtn").onclick=function(){tourShow(0)};
+document.getElementById("bkGo").onclick=function(){document.getElementById("exp").click()};
+document.getElementById("bkLater").onclick=function(){S.bsnooze=Date.now()+7*864e5;save();bkCheck()};
+document.getElementById("scPre").onchange=function(){if(this.value==="custom"){S.pre="custom";save();return}setPreset(this.value);render()};
+document.getElementById("irRead").onclick=irShow;
+document.getElementById("irAdd").onclick=irAdd;
+document.getElementById("irSample").onclick=function(){document.getElementById("irBox").value="Final Exam Routine\nSL  Date  Time  Course\n1.  17 Oct 2026 (Saturday)  10:00 AM - 12:00 PM  CCE-1105 Computer Fundamentals and Programming\n2.  20/10/2026  2:00 PM  MATH-1101 Calculus I\n3.  Tue, 21 October 2026 | 09.30 am | PHY-1101 Physics I\n4.  Oct 25, 2026 - ENG-1104 English\nNote: Bring your ID card.";irShow()};
+document.getElementById("shH").onclick=shareHero;
+document.getElementById("shW").onclick=function(){shareTo("w")};
+document.getElementById("shF").onclick=function(){shareTo("f")};
+document.getElementById("shT").onclick=function(){shareTo("t")};
+document.getElementById("shC").onclick=shareCopy;
+setInterval(clsNext,60000);
+document.getElementById("ntOn").onclick=function(){
+  if(S.nt.on){S.nt.on=false;save();ntUI();return}
+  S.nt.on=true;save();
+  if(window.Notification&&Notification.permission==="default")Notification.requestPermission().then(function(){ntUI();ntCheck()});else{ntUI();ntCheck()}
+};
+document.getElementById("ntTest").onclick=function(){notify("Test reminder","This is how your reminders will look.","test")};
+document.getElementById("ntLead").onchange=function(){S.nt.lead=+this.value;save()};
+document.getElementById("ntEve").onchange=function(){S.nt.eve=this.value||"20:00";save();ntCheck()};
+document.getElementById("ntMorn").onchange=function(){S.nt.morn=this.value||"07:00";save()};
+document.getElementById("clIcs").onclick=clsIcs;
+document.getElementById("dlIcs2").onclick=function(){icsDownload(S.dl)};
+document.getElementById("toast").onclick=function(){this.hidden=true};
+setInterval(cdTick,1000);setInterval(ntCheck,30000);setTimeout(ntCheck,3000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden){ntCheck();cdTick()}});
+document.getElementById("atAdd").onclick=function(){S.at.push({n:"",h:"",a:""});atList();save()};
+document.getElementById("dlAdd").onclick=function(){S.dl.push({t:"",d:"",h:"",k:"Exam",m:""});dlList();save()};
+document.getElementById("dlIcs").onclick=function(){icsDownload(S.dl)};
+document.getElementById("tmGo").onclick=tmGo;
+document.getElementById("tmRs").onclick=tmReset;
+document.getElementById("tmm").onchange=function(){if(!TM.run)tmReset()};
+document.getElementById("csv").onclick=csvDownload;
+document.getElementById("shr").onclick=shareCard;
+document.getElementById("lg").onclick=function(){S.lang=S.lang==="bn"?"en":"bn";save();applyLang()};
+document.getElementById("exAdd").onclick=function(){S.ex.push({n:"",f:"",o:""});exList();save()};
+document.getElementById("rt").onchange=function(){S.rt=this.value;document.getElementById("cap").hidden=this.value!=="cap";calc()};
+document.getElementById("cap").onchange=function(){S.cap=+this.value;calc()};
+document.getElementById("wa").onclick=wiApply;
+document.getElementById("wz").onclick=function(){S.wi={};wiList();wiCalc();save()};
+/* ===== CLOUD SYNC (optional): paste your Firebase web config here, e.g. {apiKey:"...",authDomain:"...",projectId:"...",appId:"..."} ===== */
+var FIREBASE_CONFIG=null;
+var FB={user:null,db:null,ready:false,timer:null};
+function cloudMsg(t){document.getElementById("cst").textContent=t}
+function cloudUI(){
+  var u=FB.user;
+  document.getElementById("cin").hidden=!!u;document.getElementById("cout").hidden=!u;
+  cloudMsg(u?"Signed in as "+(u.email||"your account")+". Your data syncs automatically.":"Sign in with Google to save your data online and open it on any device.");
+}
+function cloudSave(){
+  if(!FB.user||!FB.db||!FB.ready)return;
+  clearTimeout(FB.timer);
+  FB.timer=setTimeout(function(){
+    FB.db.collection("users").doc(FB.user.uid).set({data:JSON.stringify(S),updated:Date.now()}).then(function(){cloudMsg("Synced "+new Date().toLocaleTimeString())}).catch(function(){cloudMsg("Sync failed. Your data is still saved on this device.")});
+  },1500);
+}
+function cloudPull(){
+  FB.ready=false;
+  FB.db.collection("users").doc(FB.user.uid).get().then(function(d){
+    var blank=S.sem.every(function(x){return x.c.every(function(c){return c.m===""&&c.n===""})});
+    if(d.exists){
+      var c=JSON.parse(d.data().data);
+      if(blank||confirm("Online data found. OK = use the online data on this device. Cancel = replace the online data with this device's data.")){S=c;render();save()}
+    }
+    FB.ready=true;cloudUI();cloudSave();
+  }).catch(function(){FB.ready=false;cloudMsg("Could not reach cloud storage. Check your Firebase rules and internet.")});
+}
+function cloudInit(){
+  if(!FIREBASE_CONFIG)return;
+  document.getElementById("cloud").hidden=false;cloudUI();
+  var urls=["app","auth","firestore"].map(function(n){return"https://www.gstatic.com/firebasejs/10.12.2/firebase-"+n+"-compat.js"});
+  (function next(i){
+    if(i>=urls.length){
+      firebase.initializeApp(FIREBASE_CONFIG);FB.db=firebase.firestore();
+      firebase.auth().onAuthStateChanged(function(u){FB.user=u;cloudUI();if(u)cloudPull()});return}
+    var sc=document.createElement("script");sc.src=urls[i];sc.onload=function(){next(i+1)};
+    sc.onerror=function(){cloudMsg("Could not load Firebase. Check your internet connection.")};document.head.appendChild(sc);
+  })(0);
+  document.getElementById("cin").onclick=function(){firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function(){cloudMsg("Sign-in was cancelled or blocked. Allow pop-ups and try again.")})};
+  document.getElementById("cout").onclick=function(){firebase.auth().signOut()};
+}
+tabsInit();
+load();render();cloudInit();extrasInit();tabShow(S.tab||"calc",false);qgInit();tourInit();bkCheck();
+document.getElementById("tabs").onclick=function(e){var b=e.target.closest("button");if(b)tabShow(b.dataset.tab)};
+</script>
+</body>
+</html>
